@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - El zumbido que nos une</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0B0B0D;
+            color: #F4F0E7;
+            font-family: 'Inter', system-ui, sans-serif;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        h1 { font-size: 48px; margin: 20px 0; color: #E9B949; }
+        p { font-size: 18px; margin: 20px 0; color: #cfc9ba; }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.05);
+            padding: 40px;
+            border-radius: 12px;
+            border: 2px dashed #E9B949;
+        }
+        canvas {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #E9B949;
+            border-radius: 8px;
+            margin: 30px 0;
+            background: #1a1520;
+        }
+        .status { margin: 30px 0; font-size: 14px; color: #809E58; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>El zumbido que nos une</h1>
+    <p>Proyecto de divulgación sobre Bombus, ciencia y comunidad</p>
+
+    <div class="status">✅ Servidor funcionando en localhost:8001</div>
+
+    <canvas id="canvas"></canvas>
+
+    <p>Canvas con animación simple (sin librerías externas)</p>
+</div>
+
+<script>
+    // Canvas animation - Panal de abejas animado
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    let time = 0;
+
+    function animate() {
+        time += 0.016;
+
+        // Fondo degradado
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, '#0a0a0c');
+        gradient.addColorStop(0.5, '#1a1520');
+        gradient.addColorStop(1, '#0f0b14');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Dibujar panales (hexágonos)
+        const size = 40;
+        const hexHeight = size * Math.sqrt(3) / 2;
+
+        ctx.strokeStyle = '#E9B949';
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = 0.6;
+
+        for (let row = -2; row < 10; row++) {
+            for (let col = -2; col < 12; col++) {
+                const x = canvas.width / 2 + col * size * 1.5 + (row % 2) * size * 0.75;
+                const y = canvas.height / 2 + row * hexHeight;
+
+                // Animación de pulso
+                const pulse = 0.8 + 0.2 * Math.sin(time * 2 + row * 0.5 + col * 0.3);
+
+                drawHexagon(ctx, x, y, size * pulse);
+            }
+        }
+
+        // Partículas flotantes
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = '#E9B949';
+        for (let i = 0; i < 30; i++) {
+            const x = canvas.width / 2 + Math.sin(time + i * 0.2) * 150;
+            const y = canvas.height / 2 + Math.cos(time * 0.7 + i * 0.3) * 120;
+            const size = 2 + Math.sin(time + i) * 1;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(animate);
+    }
+
+    function drawHexagon(ctx, x, y, size) {
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+            const angle = (i * 60) * Math.PI / 180;
+            const hx = x + size * Math.cos(angle);
+            const hy = y + size * Math.sin(angle);
+            if (i === 0) ctx.moveTo(hx, hy);
+            else ctx.lineTo(hx, hy);
+        }
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    animate();
+
+    console.log('✅ Canvas animation started');
+    console.log('✅ Servidor localhost:8001 funciona correctamente');
+</script>
+
+</body>
+</html>

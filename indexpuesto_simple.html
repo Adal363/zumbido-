@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El zumbido que nos une — Bombus, ciencia y comunidad</title>
+    <meta name="description" content="Experiencia de divulgación sobre el abejorro Bombus, la economía del jitomate y la comunidad de San Andrés Tlalamac.">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --negro: #0B0B0D;
+            --ambar: #E9B949;
+            --rojo: #C93A2F;
+            --verde: #809E58;
+            --blanco: #F4F0E7;
+            --serif: "Playfair Display", Georgia, serif;
+            --sans: "Inter", system-ui, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--negro);
+            color: var(--blanco);
+            font-family: var(--sans);
+            line-height: 1.65;
+            overflow-x: hidden;
+            background: linear-gradient(180deg, #0B0B0D 0%, #1a1520 50%, #0f0b14 100%);
+        }
+
+        a { color: var(--ambar); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        #progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0;
+            background: linear-gradient(90deg, var(--ambar), var(--rojo));
+            z-index: 5;
+        }
+
+        .container { position: relative; z-index: 2; }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 11vh 8vw;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .kicker {
+            font-size: 13px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--ambar);
+            font-weight: 600;
+            margin-bottom: 18px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        h1 {
+            font-family: var(--serif);
+            font-weight: 900;
+            font-size: clamp(38px, 8vw, 92px);
+            line-height: 1.02;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--blanco) 0%, var(--ambar) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out 0.1s backwards;
+        }
+
+        h2 {
+            font-family: var(--serif);
+            font-weight: 700;
+            font-size: clamp(28px, 5vw, 52px);
+            line-height: 1.08;
+            margin-bottom: 20px;
+            color: var(--blanco);
+        }
+
+        p.lead {
+            font-size: clamp(17px, 2.2vw, 22px);
+            max-width: 60ch;
+            color: #e8e3d6;
+        }
+
+        .sub {
+            font-family: var(--sans);
+            font-weight: 300;
+            font-size: clamp(16px, 2.4vw, 24px);
+            color: #cfc9ba;
+            margin-top: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .num {
+            font-family: var(--serif);
+            font-style: italic;
+            color: var(--ambar);
+            font-size: clamp(15px, 2vw, 18px);
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 26px;
+            margin-top: 34px;
+        }
+
+        .stat {
+            flex: 1 1 180px;
+            border-left: 3px solid var(--ambar);
+            padding-left: 14px;
+        }
+
+        .stat b {
+            display: block;
+            font-family: var(--serif);
+            font-size: clamp(26px, 4vw, 40px);
+            color: var(--ambar);
+            line-height: 1;
+        }
+
+        .stat span {
+            font-size: 13px;
+            color: #b8b2a4;
+        }
+
+        .split {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-top: 30px;
+        }
+
+        .card {
+            flex: 1 1 260px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1.5px solid rgba(233, 185, 73, 0.25);
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .card h3 {
+            font-family: var(--serif);
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .card.nat h3 { color: var(--verde); }
+        .card.imp h3 { color: var(--rojo); }
+
+        .card p {
+            font-size: 14.5px;
+            color: #cfc9ba;
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .tag.nat { background: rgba(128, 158, 88, 0.2); color: var(--verde); }
+        .tag.imp { background: rgba(201, 58, 47, 0.2); color: var(--rojo); }
+
+        .videobox {
+            margin-top: 28px;
+            width: 100%;
+            max-width: 760px;
+            aspect-ratio: 16/9;
+            border: 2px solid rgba(233, 185, 73, 0.3);
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .videobox iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .refs {
+            margin-top: 24px;
+            columns: 2;
+            column-gap: 34px;
+        }
+
+        .refs li {
+            font-size: 13px;
+            color: #bdb7a8;
+            margin-bottom: 10px;
+            list-style: none;
+            padding-left: 14px;
+            border-left: 2px solid rgba(233, 185, 73, 0.3);
+            break-inside: avoid;
+        }
+
+        footer {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 50px 8vw 70px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 13px;
+            color: #9b958a;
+            background: rgba(11, 11, 13, 0.8);
+        }
+
+        footer b { color: var(--blanco); }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 680px) {
+            .refs { columns: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div class="container">
+
+    <section style="text-align:center;align-items:center">
+        <div>
+            <div class="kicker">Bombus · ciencia · comunidad</div>
+            <h1>El zumbido<br>que nos une</h1>
+            <p class="sub">Una historia sobre el abejorro, el jitomate y San Andrés Tlalamac.</p>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <div class="num">01 — Esto que ves en tu plato</div>
+            <h2>Detrás de cada jitomate hay un insecto que casi nadie nota.</h2>
+            <p class="lead">El abejorro <i>Bombus</i> sostiene, en silencio, buena parte de lo que comemos. Sin él, el plato cambia.</p>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <div class="num">02 — El secreto de la flor</div>
+            <h2>La flor del tomate no se abre sola.</h2>
+            <p class="lead">Sus anteras guardan el polen encerrado: solo lo liberan con una vibración precisa. Si nadie la activa, no hay fruto.</p>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <div class="num">03 — El zumbido perfecto</div>
+            <h2>El abejorro abraza la flor y vibra como un diapasón.</h2>
+            <p class="lead">A unas 400 vibraciones por segundo libera el polen. Es la <b>polinización por zumbido</b>, y ningún otro insecto lo hace tan bien.</p>
+            <div class="stats">
+                <div class="stat"><b>~400 Hz</b><span>frecuencia de la vibración</span></div>
+                <div class="stat"><b>+30–40%</b><span>peso del fruto vs. polinización manual</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <div class="num">04 — Tlalamac</div>
+            <h2>Una comunidad que vive del jitomate.</h2>
+            <p class="lead">En San Andrés Tlalamac (Atlautla, Estado de México), el cultivo sostiene familias enteras. Pero los productores notan que el «jicote» casi desapareció de las parcelas.</p>
+            <div class="stats">
+                <div class="stat"><b>800 → 150</b><span>cajas esperadas vs. reales por ciclo</span></div>
+                <div class="stat"><b>−81%</b><span>de la producción potencial</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <div class="num">05 — México y el tomate</div>
+            <h2>No es solo comida: es economía.</h2>
+            <p class="lead">México es el primer exportador mundial de jitomate. Y la polinización es un servicio con valor real.</p>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <div class="num">06 — El conflicto invisible</div>
+            <h2>Tres presiones que actúan juntas.</h2>
+            <p class="lead">Para combatir plagas se usan <b>insecticidas sistémicos</b> que envenenan toda la planta —néctar y polen incluidos—. Se suman la <b>pérdida de hábitat</b> (quema de cerros, acolchado) y el <b>cambio climático</b>. Ninguno actúa solo.</p>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <div class="num">07 — ¿Qué está en juego?</div>
+            <h2>No todos los abejorros son iguales.</h2>
+            <div class="split">
+                <div class="card imp">
+                    <span class="tag imp">Importado</span>
+                    <h3>Bombus impatiens</h3>
+                    <p>De cría comercial. Restringido en México hasta al menos 2030: contagia patógenos (<i>Nosema</i>, <i>Crithidia</i>) y puede hibridar con las especies nativas.</p>
+                </div>
+                <div class="card nat">
+                    <span class="tag nat">Nativo</span>
+                    <h3>Bombus ephippiatus</h3>
+                    <p>El «jicote». Poliniza el jitomate con eficiencia comparable y sin riesgo de invasión. Conservarlo es un activo ecológico y económico.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <div class="num">08 — El video</div>
+            <h2>Míralo en movimiento.</h2>
+            <p class="lead">La historia completa, en video.</p>
+            <div class="videobox">
+                <iframe src="https://drive.google.com/file/d/1sProPRohPwuax_scc3zBX4alUnRrva_T7icW2OO4i24/preview" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <div class="num">Fuentes</div>
+            <h2>De dónde sale cada dato.</h2>
+            <ul class="refs">
+                <li>Kerr, J. T., et al. (2015). Climate change impacts on bumblebees converge across continents. <i>Science, 349</i>(6244).</li>
+                <li>Sánchez-Bayo, F., &amp; Wyckhuys, K. A. G. (2019). Worldwide decline of the entomofauna. <i>Biological Conservation, 232</i>.</li>
+                <li>SADER &amp; SEMARNAT (2021). <i>Diagnóstico: situación actual de los polinizadores en México</i>.</li>
+                <li>SADER (2024). <i>Escenario mensual de productos agroalimentarios: jitomate</i>.</li>
+                <li>Cameron, S. A., et al. (2011). Patterns of widespread decline in North American bumble bees. <i>PNAS, 108</i>(2).</li>
+                <li>Bashir, M. A., et al. (2022). Bumblebee pollination enhances yield and flavor of tomato. <i>Agriculture, 12</i>(6).</li>
+                <li>Vergara, C. H. (2023). <i>Atlas de los Bombus de México</i>.</li>
+                <li>IPBES (2016). <i>Assessment report on pollinators, pollination and food production</i>.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section style="text-align:center;align-items:center">
+        <div>
+            <div class="num">El zumbido que nos une</div>
+            <h1 style="font-size:clamp(32px,6vw,68px)">Cuida las flores.<br>Cuida el campo.<br>Cuida el zumbido.</h1>
+            <p style="font-family:var(--serif);font-style:italic;font-size:clamp(20px,3vw,30px);color:var(--blanco);line-height:1.25;margin-top:34px">«Detrás de cada jitomate existe un zumbido. Y ese zumbido también nos une.»</p>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <p><b>El zumbido que nos une</b> — Proyecto de divulgación · Universidad Nacional Rosario Castellanos</p>
+    <p>Economía y Desarrollo Sostenible · Liz M. Ruiz Pérez &amp; Rebeca Juárez · 2026</p>
+</footer>
+
+<script>
+    // Progress bar
+    window.addEventListener('scroll', () => {
+        const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrolled = (window.scrollY / windowHeight) * 100;
+        document.getElementById('progress').style.width = scrolled + '%';
+    });
+</script>
+
+</body>
+</html>
