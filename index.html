@@ -1,526 +1,733 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El zumbido que nos une — Bombus, ciencia y comunidad</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --negro: #0B0B0D;
-            --ambar: #E9B949;
-            --rojo: #C93A2F;
-            --verde: #809E58;
-            --blanco: #F4F0E7;
-            --serif: 'Playfair Display', Georgia, serif;
-            --sans: 'Inter', system-ui, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El zumbido que nos une — Bombus, ciencia y comunidad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --negro: #0B0B0D;
+      --ambar: #E9B949;
+      --rojo: #C93A2F;
+      --verde: #809E58;
+      --blanco: #F4F0E7;
+      --serif: "Playfair Display", Georgia, serif;
+      --sans: "Inter", system-ui, sans-serif;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--negro);
+      color: var(--blanco);
+      font-family: var(--sans);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+    a { color: var(--ambar); }
 
-        html {
-            scroll-behavior: smooth;
-        }
+    #particles-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
 
-        body {
-            background: var(--negro);
-            color: var(--blanco);
-            font-family: var(--sans);
-            line-height: 1.65;
-            overflow-x: hidden;
-        }
+    .wrap { position: relative; z-index: 1; }
 
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
+    #progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0;
+      background: linear-gradient(90deg, var(--ambar), var(--rojo));
+      z-index: 5;
+      box-shadow: 0 0 20px rgba(233, 185, 73, 0.8);
+    }
 
-        .content {
-            position: relative;
-            z-index: 2;
-        }
+    #dots {
+      position: fixed;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
-        #progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            width: 0;
-            background: linear-gradient(90deg, var(--ambar), var(--rojo));
-            z-index: 10;
-            box-shadow: 0 0 20px rgba(233, 185, 73, 0.8);
-        }
+    #dots button {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 1.5px solid var(--ambar);
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.3s;
+    }
 
-        #dots {
-            position: fixed;
-            right: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+    #dots button.active {
+      background: var(--ambar);
+      transform: scale(1.35);
+      box-shadow: 0 0 15px rgba(233, 185, 73, 0.8);
+    }
 
-        #dots button {
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            border: 1.5px solid var(--ambar);
-            background: transparent;
-            cursor: pointer;
-            padding: 0;
-            transition: all 0.3s;
-        }
+    #dots button:hover {
+      background: rgba(233, 185, 73, 0.5);
+      transform: scale(1.15);
+    }
 
-        #dots button.active {
-            background: var(--ambar);
-            transform: scale(1.35);
-            box-shadow: 0 0 15px rgba(233, 185, 73, 0.8);
-        }
+    section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 11vh 8vw;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
 
-        #dots button:hover {
-            background: rgba(233, 185, 73, 0.5);
-            transform: scale(1.15);
-        }
+    .kicker {
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--ambar);
+      font-weight: 600;
+      margin-bottom: 18px;
+      animation: fadeInUp 0.8s ease-out;
+    }
 
-        section {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 11vh 8vw;
-            max-width: 1100px;
-            margin: 0 auto;
-            position: relative;
-        }
+    h1 {
+      font-family: var(--serif);
+      font-weight: 900;
+      font-size: clamp(38px, 8vw, 92px);
+      line-height: 1.02;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--blanco) 0%, var(--ambar) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeInUp 1s ease-out 0.1s backwards;
+    }
 
-        .kicker {
-            font-size: 13px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--ambar);
-            font-weight: 600;
-            margin-bottom: 18px;
-            animation: fadeInUp 0.8s ease-out;
-        }
+    h2 {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: clamp(28px, 5vw, 52px);
+      line-height: 1.08;
+      margin-bottom: 20px;
+      animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    }
 
-        h1 {
-            font-family: var(--serif);
-            font-weight: 900;
-            font-size: clamp(38px, 8vw, 92px);
-            line-height: 1.02;
-            letter-spacing: -1px;
-            background: linear-gradient(135deg, var(--blanco) 0%, var(--ambar) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: fadeInUp 1s ease-out 0.1s backwards;
-            margin-bottom: 20px;
-        }
+    h3 {
+      font-family: var(--serif);
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
 
-        h2 {
-            font-family: var(--serif);
-            font-weight: 700;
-            font-size: clamp(28px, 5vw, 48px);
-            line-height: 1.1;
-            animation: fadeInUp 0.8s ease-out 0.2s backwards;
-            margin-bottom: 20px;
-        }
+    p.lead {
+      font-size: clamp(17px, 2.2vw, 22px);
+      max-width: 60ch;
+      color: #e8e3d6;
+      animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    }
 
-        .sub {
-            font-size: clamp(16px, 2vw, 20px);
-            color: #cfc9ba;
-            max-width: 600px;
-            animation: fadeInUp 0.8s ease-out 0.3s backwards;
-        }
+    .sub {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: clamp(16px, 2.4vw, 24px);
+      color: #cfc9ba;
+      margin-top: 18px;
+      letter-spacing: 0.5px;
+      animation: fadeInUp 0.8s ease-out 0.3s backwards;
+    }
 
-        .num {
-            font-size: 13px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: rgba(233, 185, 73, 0.7);
-            margin-bottom: 24px;
-            animation: fadeInUp 0.8s ease-out backwards;
-        }
+    .num {
+      font-family: var(--serif);
+      font-style: italic;
+      color: var(--ambar);
+      font-size: clamp(15px, 2vw, 18px);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      animation: fadeInUp 0.8s ease-out backwards;
+    }
 
-        .lead {
-            font-size: clamp(16px, 2vw, 20px);
-            color: #cfc9ba;
-            max-width: 700px;
-            line-height: 1.8;
-            animation: fadeInUp 0.8s ease-out 0.2s backwards;
-        }
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 28px;
-            margin-top: 40px;
-            animation: fadeInUp 1s ease-out 0.3s backwards;
-        }
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
 
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(233, 185, 73, 0.2);
-            padding: 28px;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 26px;
+      margin-top: 34px;
+      animation: fadeInUp 1s ease-out 0.3s backwards;
+    }
 
-        .card:hover {
-            border-color: var(--ambar);
-            background: rgba(233, 185, 73, 0.08);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(233, 185, 73, 0.1);
-        }
+    .stat {
+      flex: 1 1 180px;
+      border-left: 3px solid var(--ambar);
+      padding-left: 14px;
+      position: relative;
+    }
 
-        .card h3 {
-            font-family: var(--serif);
-            font-size: 24px;
-            margin-bottom: 12px;
-            font-weight: 700;
-        }
+    .stat b {
+      display: block;
+      font-family: var(--serif);
+      font-size: clamp(26px, 4vw, 40px);
+      color: var(--blanco);
+      line-height: 1;
+    }
 
-        .card.nat h3 {
-            color: var(--verde);
-        }
+    .stat span {
+      font-size: 13px;
+      color: #b8b2a4;
+    }
 
-        .card.imp h3 {
-            color: var(--rojo);
-        }
+    .split {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 30px;
+      animation: fadeInUp 1s ease-out 0.3s backwards;
+    }
 
-        .card p {
-            font-size: 14.5px;
-            color: #cfc9ba;
-            line-height: 1.7;
-        }
+    .card {
+      flex: 1 1 260px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(233, 185, 73, 0.25);
+      border-radius: 12px;
+      padding: 22px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
 
-        .tag {
-            display: inline-block;
-            font-size: 11px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 6px 12px;
-            border-radius: 20px;
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
+    .card.nat { border-color: var(--verde); }
+    .card.imp { border-color: var(--rojo); }
 
-        .tag.nat {
-            background: rgba(128, 158, 88, 0.2);
-            color: var(--verde);
-        }
+    .card.nat h3 { color: var(--verde); }
+    .card.imp h3 { color: var(--rojo); }
 
-        .tag.imp {
-            background: rgba(201, 58, 47, 0.2);
-            color: var(--rojo);
-        }
+    .card p {
+      font-size: 14.5px;
+      color: #cfc9ba;
+    }
 
-        .quote {
-            font-family: var(--serif);
-            font-style: italic;
-            font-size: clamp(24px, 4vw, 36px);
-            color: var(--blanco);
-            max-width: 500px;
-            line-height: 1.3;
-            text-shadow: 0 0 20px rgba(233, 185, 73, 0.2);
-            animation: fadeInUp 0.8s ease-out 0.2s backwards;
-        }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(233, 185, 73, 0.2);
+      border-color: var(--ambar);
+      background: rgba(233, 185, 73, 0.08);
+    }
 
-        footer {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 50px 8vw 70px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 13px;
-            color: #9b958a;
-            background: rgba(11, 11, 13, 0.9);
-            backdrop-filter: blur(10px);
-        }
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
 
-        footer b {
-            color: var(--blanco);
-        }
+    .tag.nat { background: rgba(128, 158, 88, 0.2); color: var(--verde); }
+    .tag.imp { background: rgba(201, 58, 47, 0.2); color: var(--rojo); }
 
-        .final {
-            text-align: center;
-            align-items: center;
-        }
+    .refs {
+      margin-top: 24px;
+      columns: 2;
+      column-gap: 34px;
+      animation: fadeInUp 1s ease-out 0.3s backwards;
+    }
 
-        .final h1 {
-            background: linear-gradient(135deg, var(--ambar) 0%, var(--rojo) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+    .refs li {
+      font-size: 13px;
+      color: #bdb7a8;
+      margin-bottom: 10px;
+      break-inside: avoid;
+      list-style: none;
+      padding-left: 14px;
+      border-left: 2px solid rgba(233, 185, 73, 0.3);
+      transition: all 0.2s ease;
+    }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(28px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .refs li:hover {
+      border-color: var(--ambar);
+      color: var(--ambar);
+      padding-left: 18px;
+    }
 
-        @media (max-width: 768px) {
-            #dots {
-                display: none;
-            }
+    .final h1 {
+      background: linear-gradient(135deg, var(--ambar) 0%, var(--rojo) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-            section {
-                padding: 8vh 5vw;
-            }
-        }
-    </style>
+    .quote {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(20px, 3vw, 30px);
+      color: var(--blanco);
+      max-width: 24ch;
+      line-height: 1.25;
+      text-shadow: 0 0 20px rgba(233, 185, 73, 0.2);
+      animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    }
+
+    footer {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 50px 8vw 70px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 13px;
+      color: #9b958a;
+      background: rgba(11, 11, 13, 0.9);
+      backdrop-filter: blur(10px);
+    }
+
+    footer b { color: var(--blanco); }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes confetti-fall {
+      to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 11, 13, 0.95);
+      align-items: center;
+      justify-content: center;
+      z-index: 9000;
+      backdrop-filter: blur(8px);
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background: var(--negro);
+      border: 2px solid var(--ambar);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      animation: fadeInUp 0.4s ease-out;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--ambar);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--negro);
+      transition: transform 0.2s;
+    }
+
+    .modal-close:hover { transform: scale(1.1); }
+
+    @media(max-width: 680px) {
+      .refs { columns: 1; }
+      #dots { display: none; }
+    }
+
+    @media(prefers-reduced-motion: reduce) {
+      .reveal { transition: none; opacity: 1; transform: none; }
+      * { animation: none !important; }
+    }
+  </style>
 </head>
 <body>
 
-<canvas id="particles-canvas"></canvas>
-
+<canvas id="particles-bg"></canvas>
 <div id="progress"></div>
 <nav id="dots"></nav>
 
-<div class="content">
+<div class="wrap">
 
-    <section id="s0" class="final">
-        <div>
-            <div class="kicker">Bombus · ciencia · comunidad</div>
-            <h1>El zumbido<br>que nos une</h1>
-            <p class="sub">Una historia sobre el abejorro, el jitomate y San Andrés Tlalamac.</p>
+  <section id="s0" class="final" style="text-align: center; align-items: center;">
+    <div class="reveal">
+      <div class="kicker">Bombus · ciencia · comunidad</div>
+      <h1>El zumbido<br>que nos une</h1>
+      <p class="sub">Una historia sobre el abejorro, el jitomate y San Andrés Tlalamac.</p>
+    </div>
+  </section>
+
+  <section id="s1">
+    <div class="reveal">
+      <div class="num">01 — Esto que ves en tu plato</div>
+      <h2>Detrás de cada jitomate hay un insecto que casi nadie nota.</h2>
+      <p class="lead">El abejorro <i>Bombus</i> sostiene, en silencio, buena parte de lo que comemos. Sin él, el plato cambia.</p>
+    </div>
+  </section>
+
+  <section id="s2">
+    <div class="reveal">
+      <div class="num">02 — El secreto de la flor</div>
+      <h2>La flor del tomate no se abre sola.</h2>
+      <p class="lead">Sus anteras guardan el polen encerrado: solo lo liberan con una vibración precisa. Si nadie la activa, no hay fruto.</p>
+    </div>
+  </section>
+
+  <section id="s3">
+    <div class="reveal">
+      <div class="num">03 — El zumbido perfecto</div>
+      <h2>El abejorro abraza la flor y vibra como un diapasón.</h2>
+      <p class="lead">A unas <b>400 vibraciones por segundo</b> libera el polen. Es la <b>polinización por zumbido</b>, y ningún otro insecto lo hace tan bien.</p>
+      <div class="stats">
+        <div class="stat"><b>~400 Hz</b><span>frecuencia de la vibración</span></div>
+        <div class="stat"><b>+30–40%</b><span>peso del fruto vs. polinización manual</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s4">
+    <div class="reveal">
+      <div class="num">04 — Tlalamac</div>
+      <h2>Una comunidad que vive del jitomate.</h2>
+      <p class="lead">En San Andrés Tlalamac, el cultivo sostiene familias enteras. Pero los productores notan que el «jicote» casi desapareció de las parcelas.</p>
+      <div class="stats">
+        <div class="stat"><b>800 → 150</b><span>cajas esperadas vs. reales por ciclo</span></div>
+        <div class="stat"><b>−81%</b><span>de la producción potencial</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s5">
+    <div class="reveal">
+      <div class="num">05 — México y el tomate</div>
+      <h2>No es solo comida: es economía.</h2>
+      <p class="lead">México es el primer exportador mundial de jitomate. Y la polinización es un servicio con valor real.</p>
+    </div>
+  </section>
+
+  <section id="s6">
+    <div class="reveal">
+      <div class="num">06 — El conflicto invisible</div>
+      <h2>Tres presiones que actúan juntas.</h2>
+      <p class="lead">Para combatir plagas se usan <b>insecticidas sistémicos</b> que envenenan toda la planta. Se suman la <b>pérdida de hábitat</b> y el <b>cambio climático</b>. Ninguno actúa solo.</p>
+    </div>
+  </section>
+
+  <section id="s7">
+    <div class="reveal">
+      <div class="num">07 — ¿Qué está en juego?</div>
+      <h2>No todos los abejorros son iguales.</h2>
+      <div class="split">
+        <div class="card imp">
+          <span class="tag imp">Importado</span>
+          <h3>Bombus impatiens</h3>
+          <p>De cría comercial. Restringido en México: contagia patógenos y puede hibridar con nativas.</p>
         </div>
-    </section>
-
-    <section id="s1">
-        <div class="num">01 — Esto que ves en tu plato</div>
-        <h2>Detrás de cada jitomate hay un insecto que casi nadie nota.</h2>
-        <p class="lead">El abejorro <i>Bombus</i> sostiene, en silencio, buena parte de lo que comemos. Sin él, el plato cambia.</p>
-
-        <div class="grid">
-            <div class="card nat">
-                <span class="tag nat">NATURAL</span>
-                <h3>Polinización</h3>
-                <p>El abejorro realiza la vibración más eficiente del reino animal para liberar polen de flores.</p>
-            </div>
-            <div class="card nat">
-                <span class="tag nat">NATURAL</span>
-                <h3>Bombus terrestris</h3>
-                <p>La especie más grande. Capaz de volar en temperaturas que otras abejas no toleran.</p>
-            </div>
-            <div class="card nat">
-                <span class="tag nat">NATURAL</span>
-                <h3>Ciclo anual</h3>
-                <p>Colonias de 50 a 400 individuos. Reinas que duran toda una estación.</p>
-            </div>
+        <div class="card nat">
+          <span class="tag nat">Nativo</span>
+          <h3>Bombus ephippiatus</h3>
+          <p>El «jicote». Poliniza con eficiencia comparable sin riesgo de invasión. Conservarlo es vital.</p>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <section id="s2">
-        <div class="num">02 — El jitomate sin abeja no es jitomate</div>
-        <h2>México produce el 15% del jitomate mundial.</h2>
-        <p class="lead">Pero sin Bombus, esa cifra sería imposible. La economía del campo depende de un insecto del tamaño de tu pulgar.</p>
+  <section id="s8">
+    <div class="reveal">
+      <div class="num">08 — Fuentes</div>
+      <h2>De dónde sale cada dato.</h2>
+      <ul class="refs">
+        <li>Kerr, J. T., et al. (2015). Climate change impacts on bumblebees converge across continents. <i>Science, 349</i>(6244).</li>
+        <li>Sánchez-Bayo, F., & Wyckhuys, K. A. G. (2019). Worldwide decline of the entomofauna. <i>Biological Conservation, 232</i>.</li>
+        <li>SADER & SEMARNAT (2021). Diagnóstico: situación actual de los polinizadores en México.</li>
+        <li>Cameron, S. A., et al. (2011). Patterns of widespread decline in North American bumble bees. <i>PNAS, 108</i>(2).</li>
+        <li>Bashir, M. A., et al. (2022). Bumblebee pollination enhances yield and flavor of tomato. <i>Agriculture, 12</i>(6).</li>
+        <li>IPBES (2016). Assessment report on pollinators, pollination and food production.</li>
+      </ul>
+    </div>
+  </section>
 
-        <div class="grid">
-            <div class="card imp">
-                <span class="tag imp">IMPACTO</span>
-                <h3>Producción agrícola</h3>
-                <p>El 75% de los cultivos alimentarios mundiales dependen parcial o totalmente de polinizadores.</p>
-            </div>
-            <div class="card imp">
-                <span class="tag imp">IMPACTO</span>
-                <h3>Valor económico</h3>
-                <p>Los polinizadores generan 15.7 mil millones de dólares anuales en servicios ecosistémicos.</p>
-            </div>
-            <div class="card imp">
-                <span class="tag imp">IMPACTO</span>
-                <h3>Riesgo actual</h3>
-                <p>Las poblaciones de Bombus declinaron 25% en la última década.</p>
-            </div>
-        </div>
-    </section>
+  <section id="s9" class="final" style="text-align: center; align-items: center;">
+    <div class="reveal">
+      <div class="num">El zumbido que nos une</div>
+      <h1 style="font-size: clamp(32px, 6vw, 68px);">Cuida las flores.<br>Cuida el campo.<br>Cuida el zumbido.</h1>
+      <p class="quote" style="margin: 34px auto 0;">«Detrás de cada jitomate existe un zumbido. Y ese zumbido también nos une.»</p>
+    </div>
+  </section>
 
-    <section id="s3">
-        <div class="num">03 — San Andrés Tlalamac: donde todo conecta</div>
-        <h2>En una milpa de CDMX, el futuro de la polinización se reescribe.</h2>
-        <p class="lead">Agricultores locales descubren que conservar a Bombus es conservar su autonomía, su tierra y su alimento.</p>
-
-        <div class="grid">
-            <div class="card nat">
-                <span class="tag nat">COMUNIDAD</span>
-                <h3>Conocimiento ancestral</h3>
-                <p>Los campesinos mayas ya sabían hace siglos que ciertas flores atraen a los polinizadores.</p>
-            </div>
-            <div class="card nat">
-                <span class="tag nat">COMUNIDAD</span>
-                <h3>Soberanía alimentaria</h3>
-                <p>Un huerto diverso es un huerto resiliente. Con Bombus, es independiente.</p>
-            </div>
-            <div class="card nat">
-                <span class="tag nat">COMUNIDAD</span>
-                <h3>Regeneración</h3>
-                <p>Cada flor silvestre que germina es un refugio para el abejorro.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="s4" class="final">
-        <div>
-            <p class="quote">«El zumbido que nos une es el sonido de la vida continuando.»</p>
-        </div>
-    </section>
-
-    <footer>
-        <p><b>El zumbido que nos une</b> — Proyecto de divulgación · Universidad Nacional Rosario Castellanos</p>
-        <p>Economía y Desarrollo Sostenible · Liz M. Ruiz Pérez & Rebeca Juárez · 2026</p>
-    </footer>
+  <footer>
+    <p><b>El zumbido que nos une</b> — Proyecto de divulgación · Universidad Nacional Rosario Castellanos</p>
+    <p>Economía y Desarrollo Sostenible · Liz M. Ruiz Pérez & Rebeca Juárez · 2026</p>
+  </footer>
 
 </div>
 
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close">×</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
 <script>
-    // ========== CANVAS PARTICLES ==========
-    const canvas = document.getElementById('particles-canvas');
-    const ctx = canvas.getContext('2d');
+  // ===== PARTÍCULAS LOCALES (sin CDN) =====
+  const canvas = document.getElementById('particles-bg');
+  const ctx = canvas.getContext('2d');
 
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const particles = [];
+  const particleCount = 80;
+  let time = 0;
+
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = (Math.random() - 0.5) * 0.5;
+      this.radius = Math.random() * 3 + 1;
+      this.color = ['#E9B949', '#809E58', '#F4F0E7'][Math.floor(Math.random() * 3)];
     }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.x < 0) this.x = canvas.width;
+      if (this.x > canvas.width) this.x = 0;
+      if (this.y < 0) this.y = canvas.height;
+      if (this.y > canvas.height) this.y = 0;
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+      ctx.strokeStyle = this.color;
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+    }
+  }
 
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+  for (let i = 0; i < particleCount; i++) {
+    particles.push(new Particle());
+  }
 
-    const particles = [];
-    const particleCount = 80;
-    let time = 0;
-
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.vx = (Math.random() - 0.5) * 0.5;
-            this.vy = (Math.random() - 0.5) * 0.5;
-            this.radius = Math.random() * 3 + 1;
-            this.color = ['#E9B949', '#809E58', '#F4F0E7'][Math.floor(Math.random() * 3)];
+  function drawLines() {
+    const maxDistance = 180;
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < maxDistance) {
+          ctx.strokeStyle = `rgba(233, 185, 73, ${0.4 * (1 - distance / maxDistance)})`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
         }
-
-        update() {
-            this.x += this.vx;
-            this.y += this.vy;
-
-            if (this.x < 0) this.x = canvas.width;
-            if (this.x > canvas.width) this.x = 0;
-            if (this.y < 0) this.y = canvas.height;
-            if (this.y > canvas.height) this.y = 0;
-        }
-
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = this.color;
-            ctx.fill();
-            ctx.strokeStyle = this.color;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-        }
+      }
     }
+  }
 
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
+  function animateParticles() {
+    time += 0.016;
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    gradient.addColorStop(0, 'rgba(11, 11, 13, 0.95)');
+    gradient.addColorStop(0.5, 'rgba(20, 15, 25, 0.95)');
+    gradient.addColorStop(1, 'rgba(15, 11, 20, 0.95)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+
+    drawLines();
+    requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
+
+  // ===== SCROLL REVEAL =====
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('in');
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+  // ===== PROGRESS BAR =====
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    document.getElementById('progress').style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+  }, { passive: true });
+
+  // ===== DOT NAVIGATION =====
+  const sections = [...document.querySelectorAll('section')];
+  const dotsNav = document.getElementById('dots');
+  sections.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.title = 'Ir a sección ' + (i + 1);
+    btn.onclick = () => s.scrollIntoView({ behavior: 'smooth' });
+    dotsNav.appendChild(btn);
+  });
+
+  const dotEls = [...dotsNav.children];
+  const dotsObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const i = sections.indexOf(entry.target);
+        dotEls.forEach(d => d.classList.remove('active'));
+        if (dotEls[i]) dotEls[i].classList.add('active');
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(s => dotsObs.observe(s));
+
+  // ===== ANIMATED COUNTERS =====
+  function animateCounters() {
+    const stats = document.querySelectorAll('.stat b');
+    stats.forEach(stat => {
+      const text = stat.textContent;
+      const match = text.match(/(\d+)/);
+      if (match) {
+        const target = parseInt(match[0]);
+        const isPercentage = text.includes('%');
+        const isNegative = text.includes('−');
+        let current = 0;
+        const increment = target / 60;
+        const counter = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            current = target;
+            clearInterval(counter);
+          }
+          const prefix = isNegative ? '−' : '';
+          const suffix = isPercentage ? '%' : '';
+          stat.textContent = prefix + Math.floor(current) + suffix;
+        }, 30);
+      }
+    });
+  }
+
+  const statsObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.animated) {
+        animateCounters();
+        entry.target.dataset.animated = 'true';
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.stats').forEach(el => statsObs.observe(el));
+
+  // ===== CARD 3D HOVER =====
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * 5;
+      const rotateY = ((x - centerX) / centerX) * 5;
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+    });
+    card.style.transition = 'transform 0.1s ease-out';
+    card.addEventListener('click', () => {
+      const title = card.querySelector('h3').textContent;
+      const content = card.querySelector('p').textContent;
+      const tag = card.querySelector('.tag').textContent;
+      document.getElementById('modal-body').innerHTML = `<h2 style="color: var(--ambar); margin-bottom: 20px;">${title}</h2><p style="color: #e8e3d6; line-height: 1.8;"><span style="display: inline-block; background: ${tag.includes('Importado') ? 'rgba(201, 58, 47, 0.2)' : 'rgba(128, 158, 88, 0.2)'}; padding: 4px 8px; border-radius: 4px; margin-bottom: 16px;">${tag}</span><br><br>${content}</p>`;
+      document.getElementById('modal').classList.add('active');
+    });
+  });
+
+  // ===== MODAL CLOSE =====
+  document.querySelector('.modal-close').addEventListener('click', () => {
+    document.getElementById('modal').classList.remove('active');
+  });
+  document.getElementById('modal').addEventListener('click', (e) => {
+    if (e.target.id === 'modal') document.getElementById('modal').classList.remove('active');
+  });
+
+  // ===== BUZZ AUDIO =====
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  let hasInteracted = false;
+  document.body.addEventListener('click', () => {
+    if (!hasInteracted) {
+      audioContext.resume();
+      hasInteracted = true;
     }
+  }, { once: true });
 
-    function drawLines() {
-        const maxDistance = 200;
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x;
-                const dy = particles[i].y - particles[j].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+  function playBuzz() {
+    if (!hasInteracted) return;
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(200 + Math.random() * 100, audioContext.currentTime);
+    gain.gain.setValueAtTime(0.05, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+    osc.start();
+    osc.stop(audioContext.currentTime + 0.1);
+  }
 
-                if (distance < maxDistance) {
-                    ctx.strokeStyle = `rgba(233, 185, 73, ${0.3 * (1 - distance / maxDistance)})`;
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.stroke();
-                }
-            }
-        }
+  // ===== CONFETTI FINAL =====
+  function createConfetti() {
+    const colors = ['#E9B949', '#C93A2F', '#809E58', '#F4F0E7'];
+    for (let i = 0; i < 50; i++) {
+      const confetti = document.createElement('div');
+      const size = Math.random() * 10 + 5;
+      confetti.style.cssText = `position: fixed; width: ${size}px; height: ${size}px; background: ${colors[Math.floor(Math.random() * 4)]}; left: ${Math.random() * 100}%; top: -10px; border-radius: 50%; pointer-events: none; z-index: 1000; animation: confetti-fall ${Math.random() * 3 + 2}s linear forwards;`;
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), (Math.random() * 3 + 2) * 1000);
     }
+  }
 
-    function animate() {
-        time += 0.016;
-
-        // Fondo degradado
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-        gradient.addColorStop(0, 'rgba(11, 11, 13, 0.95)');
-        gradient.addColorStop(0.5, 'rgba(20, 15, 25, 0.95)');
-        gradient.addColorStop(1, 'rgba(15, 11, 20, 0.95)');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Actualizar y dibujar partículas
-        particles.forEach(p => {
-            p.update();
-            p.draw();
-        });
-
-        // Dibujar líneas entre partículas
-        drawLines();
-
-        requestAnimationFrame(animate);
+  const lastSection = document.querySelector('.final:last-of-type');
+  const lastObs = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !entries[0].target.dataset.confetti) {
+      createConfetti();
+      playBuzz();
+      entries[0].target.dataset.confetti = 'true';
     }
+  }, { threshold: 0.5 });
+  if (lastSection) lastObs.observe(lastSection);
 
-    animate();
-
-    // ========== SCROLL PROGRESS & NAV ==========
-    function initScrollFeatures() {
-        const sections = document.querySelectorAll('section');
-        const dotsNav = document.getElementById('dots');
-
-        sections.forEach((section, i) => {
-            const btn = document.createElement('button');
-            btn.setAttribute('aria-label', `Ir a sección ${i + 1}`);
-            btn.onclick = () => section.scrollIntoView({ behavior: 'smooth' });
-            dotsNav.appendChild(btn);
-        });
-
-        window.addEventListener('scroll', () => {
-            // Progress bar
-            const progress = document.getElementById('progress');
-            const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrolled = (window.scrollY / windowHeight) * 100;
-            progress.style.width = scrolled + '%';
-
-            // Dot navigation
-            let current = 0;
-            sections.forEach((section, i) => {
-                if (window.pageYOffset >= section.offsetTop - 300) {
-                    current = i;
-                }
-            });
-
-            document.querySelectorAll('#dots button').forEach((btn, i) => {
-                btn.classList.toggle('active', i === current);
-            });
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', initScrollFeatures);
 </script>
 
 </body>
