@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR - El zumbido que nos une</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0a0a0c 0%, #1a1520 50%, #0f0b14 100%);
+            color: #F4F0E7;
+            font-family: 'Inter', system-ui, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            padding: 40px;
+            border-radius: 16px;
+            border: 2px solid #E9B949;
+            max-width: 500px;
+        }
+        h1 {
+            font-size: 32px;
+            color: #E9B949;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+        .subtitle {
+            color: #cfc9ba;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+        #qrcode {
+            display: inline-block;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .url {
+            color: #E9B949;
+            font-size: 12px;
+            word-break: break-all;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(233,185,73,0.1);
+            border-radius: 8px;
+            font-family: monospace;
+        }
+        .instructions {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #bdb7a8;
+            line-height: 1.8;
+        }
+        .instructions strong { color: #E9B949; }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #E9B949;
+            color: #0B0B0D;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #F4F0E7;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>El zumbido que nos une</h1>
+    <p class="subtitle">Escanea el QR y explora</p>
+
+    <div id="qrcode"></div>
+
+    <div class="url">https://adal363.github.io/zumbido-/test.html</div>
+
+    <div class="instructions">
+        <p><strong>📱 Para compartir:</strong></p>
+        <p>Imprime este QR o comparte la pantalla para que la gente lo escanee con su teléfono.</p>
+    </div>
+
+    <button class="btn" onclick="window.print()">🖨️ Imprimir QR</button>
+</div>
+
+<script>
+    new QRCode(document.getElementById("qrcode"), {
+        text: "https://adal363.github.io/zumbido-/test.html",
+        width: 256,
+        height: 256,
+        colorDark: "#0B0B0D",
+        colorLight: "#F4F0E7",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+</script>
+
+</body>
+</html>
