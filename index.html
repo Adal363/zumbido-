@@ -492,7 +492,7 @@
 </div>
 
 <script>
-  // ===== PARTÍCULAS LOCALES (sin CDN) =====
+  // ===== PARTÍCULAS INTERACTIVAS (sin CDN) =====
   const canvas = document.getElementById('particles-bg');
   const ctx = canvas.getContext('2d');
 
@@ -504,34 +504,71 @@
   window.addEventListener('resize', resizeCanvas);
 
   const particles = [];
-  const particleCount = 80;
-  let time = 0;
+  const particleCount = 100;
+  let mouseX = canvas.width / 2;
+  let mouseY = canvas.height / 2;
+  let mouseRadius = 150;
 
   class Particle {
     constructor() {
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
-      this.vx = (Math.random() - 0.5) * 0.5;
-      this.vy = (Math.random() - 0.5) * 0.5;
-      this.radius = Math.random() * 3 + 1;
-      this.color = ['#E9B949', '#809E58', '#F4F0E7'][Math.floor(Math.random() * 3)];
+      this.vx = (Math.random() - 0.5) * 1;
+      this.vy = (Math.random() - 0.5) * 1;
+      this.radius = Math.random() * 3 + 2;
+      this.colors = ['#E9B949', '#809E58', '#F4F0E7'];
+      this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+      this.opacity = 0.6 + Math.random() * 0.4;
+      this.mass = this.radius;
     }
+
     update() {
+      // Repulsión del mouse
+      const dx = this.x - mouseX;
+      const dy = this.y - mouseY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < mouseRadius && distance > 0) {
+        const angle = Math.atan2(dy, dx);
+        const force = (mouseRadius - distance) / mouseRadius * 3;
+        this.vx += Math.cos(angle) * force;
+        this.vy += Math.sin(angle) * force;
+      }
+
+      // Fricción
+      this.vx *= 0.98;
+      this.vy *= 0.98;
+
+      // Movimiento
       this.x += this.vx;
       this.y += this.vy;
-      if (this.x < 0) this.x = canvas.width;
-      if (this.x > canvas.width) this.x = 0;
-      if (this.y < 0) this.y = canvas.height;
-      if (this.y > canvas.height) this.y = 0;
+
+      // Bordes
+      if (this.x < 0) { this.x = canvas.width; this.vx *= -1; }
+      if (this.x > canvas.width) { this.x = 0; this.vx *= -1; }
+      if (this.y < 0) { this.y = canvas.height; this.vy *= -1; }
+      if (this.y > canvas.height) { this.y = 0; this.vy *= -1; }
     }
+
     draw() {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
       ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.opacity;
       ctx.fill();
+      ctx.globalAlpha = 1;
       ctx.strokeStyle = this.color;
-      ctx.lineWidth = 0.5;
+      ctx.lineWidth = 1;
       ctx.stroke();
+
+      // Glow effect
+      const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 2);
+      gradient.addColorStop(0, `rgba(233, 185, 73, 0.3)`);
+      gradient.addColorStop(1, `rgba(233, 185, 73, 0)`);
+      ctx.fillStyle = gradient;
+      ctx.globalAlpha = 0.5;
+      ctx.fill();
+      ctx.globalAlpha = 1;
     }
   }
 
@@ -540,14 +577,16 @@
   }
 
   function drawLines() {
-    const maxDistance = 180;
+    const maxDistance = 200;
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
         const dx = particles[i].x - particles[j].x;
         const dy = particles[i].y - particles[j].y;
         const distance = Math.sqrt(dx * dx + dy * dy);
+
         if (distance < maxDistance) {
-          ctx.strokeStyle = `rgba(233, 185, 73, ${0.4 * (1 - distance / maxDistance)})`;
+          const opacity = (1 - distance / maxDistance) * 0.6;
+          ctx.strokeStyle = `rgba(233, 185, 73, ${opacity})`;
           ctx.lineWidth = 1.5;
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
@@ -558,8 +597,29 @@
     }
   }
 
+  // Track mouse
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  // Click para agregar partículas
+  document.addEventListener('click', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    for (let i = 0; i < 10; i++) {
+      const p = new Particle();
+      p.x = mouseX + (Math.random() - 0.5) * 30;
+      p.y = mouseY + (Math.random() - 0.5) * 30;
+      particles.push(p);
+    }
+    // Limitar partículas
+    if (particles.length > 200) {
+      particles.splice(0, 10);
+    }
+  });
+
   function animateParticles() {
-    time += 0.016;
     const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
     gradient.addColorStop(0, 'rgba(11, 11, 13, 0.95)');
     gradient.addColorStop(0.5, 'rgba(20, 15, 25, 0.95)');
