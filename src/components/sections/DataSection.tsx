@@ -125,6 +125,36 @@ const DataSection: React.FC = () => {
           <strong style={{ color: '#D4A574' }}>50%</strong>.
         </p>
 
+        {/* YOUTUBE VIDEO EMBED */}
+        <div
+          style={{
+            position: 'relative',
+            paddingBottom: '56.25%',
+            height: 0,
+            overflow: 'hidden',
+            marginBottom: '3rem',
+            borderRadius: '16px',
+            boxShadow: '0 0 40px rgba(212, 165, 116, 0.15)',
+            border: '1px solid rgba(41, 53, 46, 0.8)',
+          }}
+        >
+          <iframe
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              border: 'none',
+              borderRadius: '16px',
+            }}
+            src="https://www.youtube.com/embed/KzfvXq6gepE"
+            title="Documental Bombus - El zumbido que nos une"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+
         <div
           style={{
             display: 'grid',
