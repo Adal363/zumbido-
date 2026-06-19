@@ -55,8 +55,23 @@ const HeroSection: React.FC = () => {
         textAlign: 'center',
         padding: '2rem',
         position: 'relative',
+        background: 'linear-gradient(135deg, rgba(10, 14, 39, 0.8) 0%, rgba(15, 10, 50, 0.8) 100%)',
       }}
     >
+      {/* Fondo de partículas de luz */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0.3,
+          pointerEvents: 'none',
+          background: `
+            radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 0, 150, 0.1) 0%, transparent 50%)
+          `,
+        }}
+      />
+
       {/* HUD interactivo */}
       <div
         ref={hudRef}
@@ -67,42 +82,49 @@ const HeroSection: React.FC = () => {
           color: '#E8E3DA',
           fontFamily: 'monospace',
           fontSize: '13px',
-          lineHeight: '1.7',
-          textShadow: '0 0 10px rgba(157, 0, 255, 0.3)',
+          lineHeight: '1.8',
+          textShadow: '0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.2)',
           textAlign: 'left',
-          borderLeft: '2px solid rgba(157, 0, 255, 0.4)',
+          borderLeft: '3px solid #00ff88',
           paddingLeft: '0.75rem',
+          background: 'rgba(0, 255, 136, 0.05)',
+          padding: '1rem',
+          borderRadius: '0.5rem',
+          boxShadow: '0 0 20px rgba(0, 255, 136, 0.2)',
         }}
       >
-        <p style={{ color: '#A8A39A', margin: '0 0 0.25rem' }}>
-          Click y manten para vibrar
+        <p style={{ color: '#A8A39A', margin: '0 0 0.5rem', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          ⚡ INTERACTIVO
         </p>
-        <p style={{ margin: 0 }}>
+        <p style={{ margin: '0.3rem 0' }}>
           Frecuencia:{' '}
-          <span style={{ color: '#39FF14' }}>{audioFreq.toFixed(0)} Hz</span>
+          <span style={{ color: '#00ff88', fontWeight: 'bold' }}>{audioFreq.toFixed(0)} Hz</span>
         </p>
-        <p style={{ margin: 0 }}>
+        <p style={{ margin: '0.3rem 0' }}>
           Amplitud:{' '}
-          <span style={{ color: '#FF4500' }}>
+          <span style={{ color: '#ff0096', fontWeight: 'bold' }}>
             {(audioGain * 100).toFixed(0)}%
           </span>
         </p>
-        <p style={{ margin: 0 }}>
-          Ecosistema:{' '}
-          <span style={{ color: '#58A65D' }}>{healthScore}%</span>
+        <p style={{ margin: '0.3rem 0' }}>
+          Salud:{' '}
+          <span style={{ color: '#00d4ff', fontWeight: 'bold' }}>{healthScore}%</span>
         </p>
       </div>
 
       {/* Contenido principal */}
-      <div>
+      <div style={{ position: 'relative', zIndex: 10 }}>
         <h1
           ref={titleRef}
           style={{
             fontFamily: '"Playfair Display", serif',
             fontSize: 'clamp(36px, 7vw, 72px)',
-            color: '#D4A574',
+            background: 'linear-gradient(135deg, #00ff88 0%, #00d4ff 50%, #ff0096 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
             marginBottom: '1.5rem',
             lineHeight: 1.15,
+            filter: 'drop-shadow(0 0 20px rgba(0, 255, 136, 0.3))',
           }}
         >
           El zumbido que nos une
@@ -115,24 +137,34 @@ const HeroSection: React.FC = () => {
             maxWidth: '560px',
             margin: '0 auto 2.5rem',
             lineHeight: '1.7',
+            textShadow: '0 0 10px rgba(0, 255, 136, 0.2)',
           }}
         >
-          Los pequenos polinizadores que sostienen la vida en Tlalmanalco.
+          Los pequeños polinizadores que sostienen la vida en Tlalmanalco.
           Una historia de ciencia, territorio y esperanza.
         </p>
         <p
           ref={scrollHintRef}
           style={{
             fontSize: '13px',
-            color: '#58A65D',
-            opacity: 0.7,
-            letterSpacing: '0.1em',
+            color: '#00ff88',
+            opacity: 0.9,
+            letterSpacing: '0.15em',
             margin: 0,
+            textTransform: 'uppercase',
+            animation: 'pulse 2s infinite',
           }}
         >
-          v desplazate para explorar
+          ↓ Desplázate para explorar
         </p>
       </div>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 0.7; }
+          50% { opacity: 1; }
+        }
+      `}</style>
     </section>
   );
 };

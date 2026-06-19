@@ -37,7 +37,6 @@ const DataSection: React.FC = () => {
 
   useGSAP(
     () => {
-      // Titulo
       gsap.from(titleRef.current, {
         scrollTrigger: {
           trigger: titleRef.current,
@@ -49,7 +48,6 @@ const DataSection: React.FC = () => {
         ease: 'power3.out',
       });
 
-      // Cards con stagger
       gsap.from(cardRefs.current, {
         scrollTrigger: {
           trigger: cardRefs.current[0],
@@ -62,7 +60,6 @@ const DataSection: React.FC = () => {
         ease: 'power2.out',
       });
 
-      // Animacion countup para cada stat
       stats.forEach((stat, i) => {
         const el = counterRefs.current[i];
         if (!el) return;
@@ -94,19 +91,37 @@ const DataSection: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '6rem 2rem',
+        background: 'linear-gradient(135deg, rgba(10, 14, 39, 0.8) 0%, rgba(20, 10, 40, 0.8) 100%)',
+        position: 'relative',
       }}
     >
-      <div style={{ maxWidth: '900px', width: '100%' }}>
+      {/* Fondo de luz */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0.2,
+          background: `
+            radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.2) 0%, transparent 50%)
+          `,
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div style={{ maxWidth: '900px', width: '100%', position: 'relative', zIndex: 10 }}>
         <h2
           ref={titleRef}
           style={{
             fontFamily: '"Playfair Display", serif',
             fontSize: 'clamp(32px, 5vw, 48px)',
-            color: '#D4A574',
+            background: 'linear-gradient(135deg, #00d4ff 0%, #00ff88 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
             marginBottom: '1.5rem',
+            filter: 'drop-shadow(0 0 15px rgba(0, 212, 255, 0.3))',
           }}
         >
-          Por que importa?
+          Por qué importa
         </h2>
         <p
           style={{
@@ -117,12 +132,11 @@ const DataSection: React.FC = () => {
             marginBottom: '3rem',
           }}
         >
-          El abejorro{' '}
-          <em style={{ color: '#E8E3DA' }}>Bombus</em> realiza la polinizacion
-          sonica del jitomate. Vibra a frecuencias especificas que liberan el
-          polen que ningun otro insecto puede alcanzar. Sin ellos, la diferencia
+          El abejorro <em style={{ color: '#00ff88' }}>Bombus</em> realiza la polinización
+          sónica del jitomate. Vibra a frecuencias específicas que liberan el
+          polen que ningún otro insecto puede alcanzar. Sin ellos, la diferencia
           en cosecha puede ser hasta del{' '}
-          <strong style={{ color: '#D4A574' }}>50%</strong>.
+          <strong style={{ color: '#ff0096' }}>50%</strong>.
         </p>
 
         {/* YOUTUBE VIDEO EMBED */}
@@ -134,8 +148,8 @@ const DataSection: React.FC = () => {
             overflow: 'hidden',
             marginBottom: '3rem',
             borderRadius: '16px',
-            boxShadow: '0 0 40px rgba(212, 165, 116, 0.15)',
-            border: '1px solid rgba(41, 53, 46, 0.8)',
+            boxShadow: '0 0 40px rgba(0, 255, 136, 0.2), 0 0 80px rgba(0, 212, 255, 0.1)',
+            border: '2px solid rgba(0, 255, 136, 0.3)',
           }}
         >
           <iframe
@@ -146,7 +160,7 @@ const DataSection: React.FC = () => {
               width: '100%',
               height: '100%',
               border: 'none',
-              borderRadius: '16px',
+              borderRadius: '14px',
             }}
             src="https://www.youtube.com/embed/KzfvXq6gepE"
             title="Documental Bombus - El zumbido que nos une"
@@ -169,21 +183,33 @@ const DataSection: React.FC = () => {
                 cardRefs.current[i] = el;
               }}
               style={{
-                border: '1px solid rgba(41, 53, 46, 0.8)',
+                border: '2px solid rgba(0, 255, 136, 0.4)',
                 borderRadius: '16px',
                 padding: '2rem 1.5rem',
                 textAlign: 'center',
-                background: 'rgba(13, 21, 16, 0.4)',
+                background: 'rgba(0, 255, 136, 0.05)',
                 backdropFilter: 'blur(8px)',
+                boxShadow: '0 0 20px rgba(0, 255, 136, 0.15)',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 255, 136, 0.3)';
+                e.currentTarget.style.borderColor = '#00ff88';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.15)';
+                e.currentTarget.style.borderColor = 'rgba(0, 255, 136, 0.4)';
               }}
             >
               <div
                 style={{
                   fontSize: '11px',
-                  color: '#6B6760',
+                  color: '#00d4ff',
                   letterSpacing: '0.12em',
                   marginBottom: '0.75rem',
                   textTransform: 'uppercase',
+                  fontWeight: 600,
                 }}
               >
                 {stat.label}
@@ -192,7 +218,9 @@ const DataSection: React.FC = () => {
                 style={{
                   fontSize: 'clamp(36px, 5vw, 52px)',
                   fontWeight: 700,
-                  color: '#D4A574',
+                  background: 'linear-gradient(135deg, #00ff88 0%, #00d4ff 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
                   fontVariantNumeric: 'tabular-nums',
                   lineHeight: 1,
                   marginBottom: '0.5rem',

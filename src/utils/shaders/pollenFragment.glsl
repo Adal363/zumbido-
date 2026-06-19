@@ -1,27 +1,44 @@
 // ============================================================================
-// TLALMANAC-X · Pollen FRAGMENT shader — "Color Shift & Glow"
-// ----------------------------------------------------------------------------
-// Colors each grain by how hard it is vibrating. At rest it reads as muted
-// honey/pollen; under sonication it ignites toward a hot gold and emits light.
+// TLALMANAC-X · Pollen FRAGMENT shader — "Neon Glow & Dynamic Color"
+// Enhanced version with multi-color cycling and frequency-based hue shifts
 // ============================================================================
 
-uniform vec3 uColorCalm;    // resting grain color (honey)
-uniform vec3 uColorActive;  // energized grain color (ignited gold)
+uniform vec3 uColorA;        // Cyan neon
+uniform vec3 uColorB;        // Light cyan
+uniform vec3 uColorC;        // Magenta neon
+uniform vec3 uColorD;        // Orange neon
+uniform float uColorIntensity; // Master glow intensity
+uniform float uFrequency;    // For hue modulation
+uniform float uTime;         // For color animation
 
-varying float vGlow;        // 0..1 oscillation energy from the vertex stage
+varying float vGlow;         // 0..1 oscillation energy from vertex stage
 
 void main() {
-  // Remap glow with a gain of 1.5 then clamp → particles reach full "active"
-  // color before peak swing, making the ignition feel snappy rather than linear.
-  float t = clamp(vGlow * 1.5, 0.0, 1.0);
+  // Glow remapping with aggressive gain for neon effect
+  float t = clamp(vGlow * 2.0, 0.0, 1.0);
 
-  // Linear interpolation: mix(a, b, t) = a·(1−t) + b·t.
-  // t=0 → calm honey, t=1 → ignited gold.
-  vec3 color = mix(uColorCalm, uColorActive, t);
+  // Dynamic color cycling based on frequency and time
+  float colorPhase = sin(uFrequency * 0.001 + uTime * 0.5) * 0.5 + 0.5;
+  
+  vec3 color;
+  if (colorPhase < 0.33) {
+    // Cyan to Light Cyan
+    color = mix(uColorA, uColorB, fract(colorPhase * 3.0));
+  } else if (colorPhase < 0.66) {
+    // Light Cyan to Magenta
+    color = mix(uColorB, uColorC, fract((colorPhase - 0.33) * 3.0));
+  } else {
+    // Magenta to Orange
+    color = mix(uColorC, uColorD, fract((colorPhase - 0.66) * 3.0));
+  }
 
-  // Emissive brightness: a 0.6 ambient floor + up to 1.4 extra from vibration.
-  // Values >1 push the grain into HDR-ish over-bright territory (bloom-friendly).
-  float brightness = 0.6 + vGlow * 1.4;
+  // Blend active color with base cyan when glowing
+  color = mix(color, uColorA, t * 0.3);
 
-  gl_FragColor = vec4(color * brightness, 1.0);
+  // Enhanced emissive brightness with HDR glow
+  // Creates bloom-friendly over-bright values for post-processing
+  float brightness = 0.8 + vGlow * 2.0 * uColorIntensity;
+
+  // Neon tube effect: slight edge softening
+  gl_FragColor = vec4(color * brightness, clamp(0.7 + t * 0.3, 0.0, 1.0));
 }

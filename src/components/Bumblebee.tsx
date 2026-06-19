@@ -26,11 +26,11 @@ const Bumblebee: React.FC<{ position?: [number, number, number] }> = ({ position
     groupRef.current.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         if (hovered || isUserHolding) {
-          child.material = new THREE.MeshStandardMaterial({
+          (child.material as any) = new THREE.MeshStandardMaterial({
             color: 0xffd700,
             emissive: 0xffaa00,
             emissiveIntensity: hovered ? 0.8 : isUserHolding ? vibrationIntensity : 0,
-            metallic: 0.3,
+            metalness: 0.3,
             roughness: 0.4,
           });
         }

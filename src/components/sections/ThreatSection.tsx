@@ -8,17 +8,17 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 const threats = [
   {
     marker: '01',
-    title: 'Perdida de habitat',
-    desc: 'La expansion agricola y urbana destruye los corredores silvestres donde el Bombus anida y forrajea.',
+    title: 'Pérdida de hábitat',
+    desc: 'La expansión agrícola y urbana destruye los corredores silvestres donde el Bombus anida y forrajea.',
   },
   {
     marker: '02',
-    title: 'Agroquimicos',
-    desc: 'Insecticidas como los neonicotinoides deterioran su sistema nervioso y su capacidad de navegacion.',
+    title: 'Agroquímicos',
+    desc: 'Insecticidas como los neonicotinoides deterioran su sistema nervioso y su capacidad de navegación.',
   },
   {
     marker: '03',
-    title: 'Cambio climatico',
+    title: 'Cambio climático',
     desc: 'Las temperaturas extremas acortan su ventana de actividad y dessincronizan su ciclo con las flores.',
   },
   {
@@ -36,42 +36,40 @@ const ThreatSection: React.FC = () => {
 
   useGSAP(
     () => {
-      // Glitch de titulo al entrar en viewport
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top 60%',
         onEnter: () => {
           const tl = gsap.timeline();
           tl.to(titleRef.current, {
-            skewX: 15,
-            color: '#FF2020',
-            textShadow: '4px 0 #FF0000, -4px 0 #00FFFF',
-            duration: 0.05,
+            skewX: 5,
+            color: '#ff0096',
+            textShadow: '3px 0 #ff0096, -3px 0 #00d4ff',
+            duration: 0.08,
             ease: 'none',
           })
             .to(titleRef.current, {
-              skewX: -8,
-              color: '#1a0000',
-              textShadow: '-3px 0 #FF0000, 3px 0 #00FFFF',
-              duration: 0.05,
+              skewX: -3,
+              color: '#ff6600',
+              textShadow: '-2px 0 #ff0096, 2px 0 #00d4ff',
+              duration: 0.08,
               ease: 'none',
             })
             .to(titleRef.current, {
-              skewX: 5,
-              color: '#FF2020',
-              textShadow: '2px 0 #FF4444, -2px 0 #00CCCC',
+              skewX: 2,
+              color: '#ff0096',
+              textShadow: '2px 0 #ff6600, -2px 0 #00d4ff',
               duration: 0.08,
               ease: 'none',
             })
             .to(titleRef.current, {
               skewX: 0,
-              color: '#E8341C',
-              textShadow: '0 0 20px rgba(255, 32, 32, 0.6)',
-              duration: 0.2,
+              color: '#ff0096',
+              textShadow: '0 0 20px rgba(255, 0, 150, 0.6), 0 0 40px rgba(255, 102, 0, 0.3)',
+              duration: 0.3,
               ease: 'power2.out',
             });
 
-          // Linea roja de entrada
           gsap.from(glitchLineRef.current, {
             scaleX: 0,
             duration: 0.6,
@@ -81,7 +79,6 @@ const ThreatSection: React.FC = () => {
         },
       });
 
-      // Cards desde la izquierda
       gsap.from(cardRefs.current, {
         scrollTrigger: {
           trigger: cardRefs.current[0],
@@ -106,10 +103,24 @@ const ThreatSection: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '6rem 2rem',
-        background: 'rgba(10, 0, 0, 0.3)',
+        background: 'linear-gradient(135deg, rgba(20, 0, 20, 0.8) 0%, rgba(40, 0, 40, 0.6) 100%)',
+        position: 'relative',
       }}
     >
-      <div style={{ maxWidth: '900px', width: '100%' }}>
+      {/* Fondo amenaza */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0.15,
+          background: `
+            radial-gradient(circle at 50% 50%, rgba(255, 0, 150, 0.3) 0%, transparent 60%)
+          `,
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div style={{ maxWidth: '900px', width: '100%', position: 'relative', zIndex: 10 }}>
         <h2
           ref={titleRef}
           style={{
@@ -124,10 +135,11 @@ const ThreatSection: React.FC = () => {
         <div
           ref={glitchLineRef}
           style={{
-            height: '3px',
-            background: 'linear-gradient(90deg, #FF2020, #FF6600, transparent)',
+            height: '4px',
+            background: 'linear-gradient(90deg, #ff0096, #ff6600, rgba(255, 0, 150, 0.1))',
             marginBottom: '3rem',
             transformOrigin: 'left center',
+            boxShadow: '0 0 20px rgba(255, 0, 150, 0.4)',
           }}
         />
         <div
@@ -144,17 +156,28 @@ const ThreatSection: React.FC = () => {
                 cardRefs.current[i] = el;
               }}
               style={{
-                border: '1px solid rgba(232, 52, 28, 0.2)',
+                border: '2px solid rgba(255, 0, 150, 0.4)',
                 borderRadius: '12px',
                 padding: '1.75rem',
-                background: 'rgba(30, 0, 0, 0.4)',
+                background: 'rgba(255, 0, 150, 0.05)',
                 backdropFilter: 'blur(6px)',
+                boxShadow: '0 0 15px rgba(255, 0, 150, 0.1)',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 30px rgba(255, 0, 150, 0.3)';
+                e.currentTarget.style.borderColor = '#ff0096';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 0, 150, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(255, 0, 150, 0.4)';
               }}
             >
               <div
                 style={{
                   fontSize: '11px',
-                  color: '#E8341C',
+                  color: '#ff6600',
                   letterSpacing: '0.15em',
                   marginBottom: '0.75rem',
                   fontWeight: 600,
@@ -166,7 +189,7 @@ const ThreatSection: React.FC = () => {
                 style={{
                   fontFamily: '"Playfair Display", serif',
                   fontSize: '18px',
-                  color: '#E8341C',
+                  color: '#ff0096',
                   marginBottom: '0.5rem',
                   marginTop: 0,
                 }}

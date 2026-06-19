@@ -18,7 +18,7 @@ const actions: {
     gain: '+12% salud',
   },
   {
-    label: 'Reducir agroquimicos',
+    label: 'Reducir agroquímicos',
     action: 'reduce_chemicals',
     gain: '+15% salud',
   },
@@ -80,11 +80,11 @@ const RestorationSection: React.FC = () => {
 
     if (pulseRef.current) {
       gsap.timeline()
-        .set(pulseRef.current, { opacity: 0.6, scale: 0 })
+        .set(pulseRef.current, { opacity: 0.8, scale: 0 })
         .to(pulseRef.current, {
-          scale: 4,
+          scale: 6,
           opacity: 0,
-          duration: 0.9,
+          duration: 1.2,
           ease: 'power2.out',
         });
     }
@@ -101,9 +101,10 @@ const RestorationSection: React.FC = () => {
         padding: '6rem 2rem',
         position: 'relative',
         overflow: 'hidden',
+        background: 'linear-gradient(135deg, rgba(10, 30, 20, 0.8) 0%, rgba(10, 14, 39, 0.8) 100%)',
       }}
     >
-      {/* Pulso de sanacion */}
+      {/* Pulso de sanación */}
       <div
         ref={pulseRef}
         style={{
@@ -112,13 +113,27 @@ const RestorationSection: React.FC = () => {
           height: '160px',
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(88,166,93,0.5) 0%, transparent 70%)',
+            'radial-gradient(circle, rgba(0, 255, 136, 0.6) 0%, transparent 70%)',
           pointerEvents: 'none',
           opacity: 0,
           zIndex: 0,
           left: '50%',
           top: '50%',
           transform: 'translate(-50%, -50%)',
+          boxShadow: '0 0 40px rgba(0, 255, 136, 0.5)',
+        }}
+      />
+
+      {/* Fondo de luz sanadora */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0.15,
+          background: `
+            radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.2) 0%, transparent 60%)
+          `,
+          pointerEvents: 'none',
         }}
       />
 
@@ -135,9 +150,12 @@ const RestorationSection: React.FC = () => {
           style={{
             fontFamily: '"Playfair Display", serif',
             fontSize: 'clamp(32px, 5vw, 48px)',
-            color: '#D4A574',
+            background: 'linear-gradient(135deg, #00ff88 0%, #00d4ff 50%, #d4a574 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
             marginBottom: '1rem',
             textAlign: 'center',
+            filter: 'drop-shadow(0 0 15px rgba(0, 255, 136, 0.3))',
           }}
         >
           Lo que podemos hacer
@@ -151,9 +169,9 @@ const RestorationSection: React.FC = () => {
             marginBottom: '1rem',
           }}
         >
-          El <em style={{ color: '#E8E3DA' }}>Bombus</em> de Tlalmanalco
+          El <em style={{ color: '#00ff88' }}>Bombus</em> de Tlalmanalco
           existe, trabaja y{' '}
-          <strong style={{ color: '#58A65D' }}>puede recuperarse</strong> — si
+          <strong style={{ color: '#00ff88' }}>puede recuperarse</strong> — si
           le damos las condiciones adecuadas.
         </p>
 
@@ -169,32 +187,33 @@ const RestorationSection: React.FC = () => {
             }}
           >
             <span>Salud del ecosistema</span>
-            <span style={{ color: '#58A65D', fontWeight: 600 }}>
+            <span style={{ color: '#00ff88', fontWeight: 600 }}>
               {healthScore}%
             </span>
           </div>
           <div
             style={{
-              height: '8px',
-              background: 'rgba(41, 53, 46, 0.6)',
+              height: '10px',
+              background: 'rgba(0, 255, 136, 0.1)',
               borderRadius: '99px',
               overflow: 'hidden',
+              border: '1px solid rgba(0, 255, 136, 0.3)',
             }}
           >
             <div
               style={{
                 height: '100%',
                 width: `${healthScore}%`,
-                background: 'linear-gradient(90deg, #29B35E, #58A65D)',
+                background: 'linear-gradient(90deg, #00ff88, #00d4ff, #00ff88)',
                 borderRadius: '99px',
                 transition: 'width 0.8s ease-out',
-                boxShadow: '0 0 12px rgba(88, 166, 93, 0.5)',
+                boxShadow: '0 0 15px rgba(0, 255, 136, 0.6), inset 0 0 10px rgba(0, 255, 136, 0.3)',
               }}
             />
           </div>
         </div>
 
-        {/* Botones de accion */}
+        {/* Botones de acción */}
         <div
           style={{
             display: 'flex',
@@ -216,19 +235,19 @@ const RestorationSection: React.FC = () => {
                 style={{
                   padding: '1rem 2rem',
                   background: done
-                    ? 'rgba(88, 166, 93, 0.12)'
-                    : '#58A65D',
-                  color: done ? '#58A65D' : '#0D1510',
-                  border: done ? '1px solid rgba(88, 166, 93, 0.4)' : 'none',
+                    ? 'rgba(0, 255, 136, 0.1)'
+                    : 'linear-gradient(135deg, #00ff88, #00d4ff)',
+                  color: done ? '#00ff88' : '#0a0e27',
+                  border: done ? '2px solid rgba(0, 255, 136, 0.4)' : '2px solid rgba(0, 255, 136, 0.6)',
                   borderRadius: '99px',
                   fontWeight: 600,
                   fontSize: '15px',
                   cursor: done ? 'default' : 'pointer',
                   transition:
-                    'box-shadow 0.2s ease-out, background 0.4s ease',
+                    'box-shadow 0.2s ease-out, background 0.4s ease, transform 0.2s ease',
                   boxShadow: done
                     ? 'none'
-                    : '0 0 20px rgba(88, 166, 93, 0.3)',
+                    : '0 0 25px rgba(0, 255, 136, 0.4)',
                   width: '100%',
                   maxWidth: '400px',
                   display: 'flex',
@@ -238,13 +257,15 @@ const RestorationSection: React.FC = () => {
                 onMouseEnter={(e) => {
                   if (!done) {
                     e.currentTarget.style.boxShadow =
-                      '0 0 35px rgba(88, 166, 93, 0.6)';
+                      '0 0 40px rgba(0, 255, 136, 0.7), 0 0 60px rgba(0, 212, 255, 0.4)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!done) {
                     e.currentTarget.style.boxShadow =
-                      '0 0 20px rgba(88, 166, 93, 0.3)';
+                      '0 0 25px rgba(0, 255, 136, 0.4)';
+                    e.currentTarget.style.transform = 'translateY(0)';
                   }
                 }}
               >
@@ -252,11 +273,11 @@ const RestorationSection: React.FC = () => {
                 <span
                   style={{
                     fontSize: '12px',
-                    opacity: 0.75,
+                    opacity: done ? 1 : 0.85,
                     marginLeft: '1rem',
                   }}
                 >
-                  {done ? 'hecho' : item.gain}
+                  {done ? '✓ hecho' : item.gain}
                 </span>
               </button>
             );
