@@ -6,11 +6,16 @@
  */
 
 import React from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, extend } from '@react-three/fiber';
+import { Effects } from '@react-three/drei';
+import { UnrealBloomPass } from 'three-stdlib';
 import * as THREE from 'three';
 import PollenSystem from './entities/PollenSystem';
 import Bumblebee from './Bumblebee';
+import BlackholeParticleSwarm from './BlackholeParticleSwarm';
 import { useEcosystemStore } from '../store/useEcosystemStore';
+
+extend({ UnrealBloomPass });
 
 /** Anima la camara segun el progreso de scroll del usuario. */
 const CameraRig: React.FC = () => {
@@ -49,7 +54,13 @@ const Scene: React.FC = () => {
 
         <CameraRig />
         <PollenSystem count={5000} />
+        <BlackholeParticleSwarm />
         <Bumblebee position={[0, 0, 0]} />
+
+        {/* Bloom Effect */}
+        <Effects disableGamma>
+          <unrealBloomPass threshold={0.2} strength={1.5} radius={0.5} />
+        </Effects>
       </Canvas>
     </div>
   );
