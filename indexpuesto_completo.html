@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El zumbido que nos une — Bombus, ciencia y comunidad</title>
+    <meta name="description" content="Experiencia de divulgación sobre el abejorro Bombus, la economía del jitomate y la comunidad de San Andrés Tlalamac.">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --negro:#0B0B0D; --ambar:#E9B949; --rojo:#C93A2F; --verde:#809E58; --blanco:#F4F0E7;
+            --serif:"Playfair Display",Georgia,serif; --sans:"Inter",system-ui,sans-serif;
+        }
+
+        *{box-sizing:border-box;margin:0;padding:0}
+
+        html{scroll-behavior:smooth}
+
+        body{
+            background:var(--negro);color:var(--blanco);font-family:var(--sans);line-height:1.65;overflow-x:hidden;
+            background-image: linear-gradient(180deg, rgba(11,11,13,0.95) 0%, rgba(20,15,25,0.95) 100%);
+        }
+
+        a{color:var(--ambar)}
+
+        #bg{
+            position:fixed;inset:0;z-index:0;
+            background: linear-gradient(135deg, #0a0a0c 0%, #1a1520 50%, #0f0b14 100%);
+        }
+
+        #bg canvas{display:block;width:100%;height:100%}
+
+        /* Canvas WebGL mejorado */
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            opacity: 0.7;
+            mix-blend-mode: screen;
+        }
+
+        .wrap{position:relative;z-index:2}
+
+        #progress{
+            position:fixed;top:0;left:0;height:3px;width:0;
+            background: linear-gradient(90deg, var(--ambar), var(--rojo));
+            z-index:5;box-shadow: 0 0 20px rgba(233,185,73,0.8);
+        }
+
+        #dots{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:5;display:flex;flex-direction:column;gap:12px}
+
+        #dots button{
+            width:11px;height:11px;border-radius:50%;border:1.5px solid var(--ambar);background:transparent;
+            cursor:pointer;padding:0;transition:background .2s,transform .2s,box-shadow .2s;
+        }
+
+        #dots button.active{
+            background:var(--ambar);transform:scale(1.35);
+            box-shadow: 0 0 15px rgba(233,185,73,0.8);
+        }
+
+        #dots button:hover{
+            background:rgba(233,185,73,.5);
+            transform: scale(1.15);
+        }
+
+        section{
+            min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+            padding:11vh 8vw;max-width:1100px;margin:0 auto;
+            position: relative;
+            backdrop-filter: blur(0.5px);
+        }
+
+        section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(233, 185, 73, 0.03) 0%,
+                transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .kicker{
+            font-size:13px;letter-spacing:4px;text-transform:uppercase;
+            color:var(--ambar);font-weight:600;margin-bottom:18px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        h1{
+            font-family:var(--serif);font-weight:900;font-size:clamp(38px,8vw,92px);
+            line-height:1.02;letter-spacing:-1px;
+            background: linear-gradient(135deg, var(--blanco) 0%, var(--ambar) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out 0.1s backwards;
+        }
+
+        h2{
+            font-family:var(--serif);font-weight:700;font-size:clamp(28px,5vw,52px);
+            line-height:1.08;margin-bottom:20px;
+            color: var(--blanco);
+            animation: fadeInUp 0.9s ease-out;
+        }
+
+        p.lead{
+            font-size:clamp(17px,2.2vw,22px);max-width:60ch;
+            color:#e8e3d6;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+
+        .sub{
+            font-family:var(--sans);font-weight:300;font-size:clamp(16px,2.4vw,24px);
+            color:#cfc9ba;margin-top:18px;letter-spacing:.5px;
+            animation: fadeInUp 0.9s ease-out 0.1s backwards;
+        }
+
+        .num{
+            font-family:var(--serif);font-style:italic;color:var(--ambar);
+            font-size:clamp(15px,2vw,18px);letter-spacing:2px;margin-bottom:8px;
+            text-shadow: 0 0 10px rgba(233,185,73,0.5);
+        }
+
+        .reveal{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s ease}
+
+        .reveal.in{opacity:1;transform:none}
+
+        .stats{display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;animation: fadeInUp 1.1s ease-out 0.3s backwards}
+
+        .stat{
+            flex:1 1 180px;border-left:3px solid var(--ambar);padding-left:14px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .stat:hover {
+            transform: translateX(8px);
+            border-color: var(--rojo);
+        }
+
+        .stat b{
+            display:block;font-family:var(--serif);font-size:clamp(26px,4vw,40px);
+            color:var(--ambar);line-height:1;text-shadow: 0 0 15px rgba(233,185,73,0.6);
+        }
+
+        .stat span{font-size:13px;color:#b8b2a4}
+
+        .figura{
+            margin-top:30px;max-width:560px;border-radius:12px;overflow:hidden;
+            box-shadow: 0 20px 60px rgba(233,185,73,0.2), 0 0 40px rgba(233,185,73,0.1);
+            animation: fadeInUp 1.2s ease-out 0.4s backwards;
+            transition: transform 0.3s ease;
+            background:#ccc;color:#999;text-align:center;padding:40px;min-height:300px;display:flex;align-items:center;justify-content:center;
+        }
+
+        .figura:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 80px rgba(233,185,73,0.3), 0 0 60px rgba(233,185,73,0.15);
+        }
+
+        .figura img{width:100%;display:block}
+
+        .cap{font-size:12.5px;color:#b8b2a4;margin-top:8px;font-style:italic}
+
+        .split{display:flex;flex-wrap:wrap;gap:24px;margin-top:30px;animation: fadeInUp 1.1s ease-out 0.3s backwards}
+
+        .card{
+            flex:1 1 260px;background:rgba(255,255,255,.04);border:1.5px solid rgba(233,185,73,.25);
+            border-radius:12px;padding:22px;transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            background: rgba(255,255,255,.08);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        }
+
+        .card.nat{border-color:var(--verde)}
+        .card.imp{border-color:var(--rojo)}
+
+        .card h3{font-family:var(--serif);font-size:22px;margin-bottom:8px;position:relative;z-index:1}
+
+        .card.nat h3{color:var(--verde)}
+        .card.imp h3{color:var(--rojo)}
+
+        .card p{font-size:14.5px;color:#cfc9ba;position:relative;z-index:1}
+
+        .tag{
+            display:inline-block;font-size:11px;letter-spacing:1px;text-transform:uppercase;
+            padding:3px 9px;border-radius:20px;margin-bottom:10px;font-weight:600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tag.nat{background:rgba(128,158,88,.2);color:var(--verde)}
+        .tag.imp{background:rgba(201,58,47,.2);color:var(--rojo)}
+
+        .videobox{
+            margin-top:28px;width:100%;max-width:760px;aspect-ratio:16/9;
+            border:2px dashed rgba(233,185,73,.5);border-radius:14px;
+            display:flex;flex-direction:column;align-items:center;justify-content:center;
+            text-align:center;color:#cfc9ba;background:rgba(255,255,255,.03);
+            animation: fadeInUp 1.2s ease-out 0.4s backwards;
+            transition: all 0.3s ease;
+        }
+
+        .videobox:hover {
+            border-color: var(--ambar);
+            background: rgba(233,185,73,.05);
+            box-shadow: 0 0 30px rgba(233,185,73,0.2);
+        }
+
+        .videobox iframe{width:100%;height:100%;border:0;border-radius:12px}
+
+        .videobox .ph{padding:24px}.videobox .ph b{color:var(--ambar)}
+
+        .refs{margin-top:24px;columns:2;column-gap:34px;animation: fadeInUp 1.1s ease-out 0.3s backwards}
+
+        .refs li{
+            font-size:13px;color:#bdb7a8;margin-bottom:10px;break-inside:avoid;
+            list-style:none;padding-left:14px;border-left:2px solid rgba(233,185,73,.3);
+            transition: all 0.2s ease;
+        }
+
+        .refs li:hover {
+            border-color: var(--ambar);
+            color: var(--ambar);
+            padding-left: 18px;
+        }
+
+        @media(max-width:680px){.refs{columns:1}}
+
+        .final h1{
+            background: linear-gradient(135deg, var(--ambar) 0%, var(--rojo) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .quote{
+            font-family:var(--serif);font-style:italic;
+            font-size:clamp(20px,3vw,30px);color:var(--blanco);max-width:24ch;
+            line-height:1.25;
+            text-shadow: 0 0 20px rgba(233,185,73,0.3);
+        }
+
+        footer{
+            position:relative;z-index:2;text-align:center;padding:50px 8vw 70px;
+            border-top:1px solid rgba(255,255,255,.1);font-size:13px;color:#9b958a;
+            background: rgba(11,11,13,0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        footer b{color:var(--blanco)}
+
+        @media(prefers-reduced-motion:reduce){
+            .reveal{transition:none;opacity:1;transform:none}
+            * {animation: none !important}
+        }
+
+        /* Animaciones personalizadas */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(233,185,73,0.5); }
+            50% { text-shadow: 0 0 20px rgba(233,185,73,0.8); }
+        }
+
+        .pollen-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .pollen-particle::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, var(--ambar) 0%, rgba(233,185,73,0.5) 70%, transparent 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(233,185,73,0.6);
+            animation: pollenFall linear forwards;
+        }
+
+        @keyframes pollenFall {
+            0% {
+                opacity: 0.8;
+                transform: translateY(-10px) scale(1);
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(150px) scale(0.3);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="bg"></div>
+<canvas id="webgl-canvas"></canvas>
+
+<div id="progress"></div>
+
+<nav id="dots"></nav>
+
+<div class="wrap">
+
+    <section id="s0" class="final" style="text-align:center;align-items:center">
+        <div class="reveal">
+            <div class="kicker">Bombus · ciencia · comunidad</div>
+            <h1>El zumbido<br>que nos une</h1>
+            <p class="sub">Una historia sobre el abejorro, el jitomate y San Andrés Tlalamac.</p>
+        </div>
+    </section>
+
+    <section id="s1">
+        <div class="reveal">
+            <div class="num">01 — Esto que ves en tu plato</div>
+            <h2>Detrás de cada jitomate hay un insecto que casi nadie nota.</h2>
+            <p class="lead">El abejorro <i>Bombus</i> sostiene, en silencio, buena parte de lo que comemos. Sin él, el plato cambia.</p>
+        </div>
+    </section>
+
+    <section id="s2">
+        <div class="reveal">
+            <div class="num">02 — El secreto de la flor</div>
+            <h2>La flor del tomate no se abre sola.</h2>
+            <p class="lead">Sus anteras guardan el polen encerrado: solo lo liberan con una vibración precisa. Si nadie la activa, no hay fruto.</p>
+            <div class="figura reveal"><img src="assets/polinizacion.png" alt="Abejorro polinizando una flor"></div>
+            <div class="cap">Polinización del abejorro sobre la flor.</div>
+        </div>
+    </section>
+
+    <section id="s3">
+        <div class="reveal">
+            <div class="num">03 — El zumbido perfecto</div>
+            <h2>El abejorro abraza la flor y vibra como un diapasón.</h2>
+            <p class="lead">A unas 400 vibraciones por segundo libera el polen. Es la <b>polinización por zumbido</b>, y ningún otro insecto lo hace tan bien.</p>
+            <div class="stats">
+                <div class="stat"><b>~400 Hz</b><span>frecuencia de la vibración</span></div>
+                <div class="stat"><b>+30–40%</b><span>peso del fruto vs. polinización manual</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="s4">
+        <div class="reveal">
+            <div class="num">04 — Tlalamac</div>
+            <h2>Una comunidad que vive del jitomate.</h2>
+            <p class="lead">En San Andrés Tlalamac (Atlautla, Estado de México), el cultivo sostiene familias enteras. Pero los productores notan que el «jicote» casi desapareció de las parcelas.</p>
+            <div class="stats">
+                <div class="stat"><b>800 → 150</b><span>cajas esperadas vs. reales por ciclo</span></div>
+                <div class="stat"><b>−81%</b><span>de la producción potencial</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="s5">
+        <div class="reveal">
+            <div class="num">05 — México y el tomate</div>
+            <h2>No es solo comida: es economía.</h2>
+            <p class="lead">México es el primer exportador mundial de jitomate. Y la polinización es un servicio con valor real.</p>
+            <div class="figura reveal"><img src="assets/infografia.png" alt="Infografía: Bombus y la economía de la polinización en México"></div>
+            <div class="cap">Estadísticas clave de la economía de la polinización (elaboración propia; fuentes: SADER y SEMARNAT, 2021; IPBES, 2016; Cameron et al., 2011).</div>
+        </div>
+    </section>
+
+    <section id="s6">
+        <div class="reveal">
+            <div class="num">06 — El conflicto invisible</div>
+            <h2>Tres presiones que actúan juntas.</h2>
+            <p class="lead">Para combatir plagas se usan <b>insecticidas sistémicos</b> que envenenan toda la planta —néctar y polen incluidos—. Se suman la <b>pérdida de hábitat</b> (quema de cerros, acolchado) y el <b>cambio climático</b>. Ninguno actúa solo.</p>
+        </div>
+    </section>
+
+    <section id="s7">
+        <div class="reveal">
+            <div class="num">07 — ¿Qué está en juego?</div>
+            <h2>No todos los abejorros son iguales.</h2>
+            <div class="split">
+                <div class="card imp">
+                    <span class="tag imp">Importado</span>
+                    <h3>Bombus impatiens</h3>
+                    <p>De cría comercial. Restringido en México hasta al menos 2030: contagia patógenos (<i>Nosema</i>, <i>Crithidia</i>) y puede hibridar con las especies nativas.</p>
+                </div>
+                <div class="card nat">
+                    <span class="tag nat">Nativo</span>
+                    <h3>Bombus ephippiatus</h3>
+                    <p>El «jicote». Poliniza el jitomate con eficiencia comparable y sin riesgo de invasión. Conservarlo es un activo ecológico y económico.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="s8">
+        <div class="reveal">
+            <div class="num">08 — El video</div>
+            <h2>Míralo en movimiento.</h2>
+            <p class="lead">La historia completa, en video.</p>
+            <div class="videobox" id="videobox">
+                <iframe src="https://drive.google.com/file/d/1sProPRohPwuax_scc3zBX4alUnRrva_T7icW2OO4i24/preview" allowfullscreen style="border:none;border-radius:12px;width:100%;height:100%"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <section id="s9">
+        <div class="reveal">
+            <div class="num">Fuentes</div>
+            <h2>De dónde sale cada dato.</h2>
+            <ul class="refs">
+                <li>Kerr, J. T., et al. (2015). Climate change impacts on bumblebees converge across continents. <i>Science, 349</i>(6244).</li>
+                <li>Sánchez-Bayo, F., &amp; Wyckhuys, K. A. G. (2019). Worldwide decline of the entomofauna. <i>Biological Conservation, 232</i>.</li>
+                <li>SADER &amp; SEMARNAT (2021). <i>Diagnóstico: situación actual de los polinizadores en México</i>.</li>
+                <li>SADER (2024). <i>Escenario mensual de productos agroalimentarios: jitomate</i>.</li>
+                <li>Cameron, S. A., et al. (2011). Patterns of widespread decline in North American bumble bees. <i>PNAS, 108</i>(2).</li>
+                <li>Bashir, M. A., et al. (2022). Bumblebee pollination enhances yield and flavor of tomato. <i>Agriculture, 12</i>(6).</li>
+                <li>Vergara, C. H. (2023). <i>Atlas de los Bombus de México</i>.</li>
+                <li>IPBES (2016). <i>Assessment report on pollinators, pollination and food production</i>.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="s10" class="final" style="text-align:center;align-items:center">
+        <div class="reveal">
+            <div class="num">El zumbido que nos une</div>
+            <h1 style="font-size:clamp(32px,6vw,68px)">Cuida las flores.<br>Cuida el campo.<br>Cuida el zumbido.</h1>
+            <p class="quote" style="margin:34px auto 0">«Detrás de cada jitomate existe un zumbido. Y ese zumbido también nos une.»</p>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <p><b>El zumbido que nos une</b> — Proyecto de divulgación · Universidad Nacional Rosario Castellanos</p>
+    <p>Economía y Desarrollo Sostenible · Liz M. Ruiz Pérez &amp; Rebeca Juárez · 2026</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles-slim/2.12.0/tsparticles.slim.bundle.min.js"></script>
+
+<script>
+    // ========== CLASE WTCGL MEJORADA ==========
+    class WTCGL {
+        constructor(el, vertexShaderSource, fragmentShaderSource, width, height, pxratio = 1, styleElement = true, webgl2 = false, params = {}) {
+            this.run = this.run.bind(this);
+            this._onRun = () => {};
+
+            if (el instanceof Object && el.el) {
+                ({ el, vertexShaderSource, fragmentShaderSource, width, height, pxratio, webgl2, styleElement } = el);
+            }
+
+            if (!el instanceof HTMLElement || el.nodeName.toLowerCase() !== 'canvas') {
+                console.log('Canvas element required');
+                return null;
+            }
+
+            this._el = el;
+            this._ctx = this._el.getContext("webgl2", params) || this._el.getContext("webgl", params);
+
+            if (!this._ctx) {
+                console.log('WebGL not supported');
+                return null;
+            }
+
+            this._ctx.getExtension('OES_standard_derivatives');
+            this._ctx.getExtension('EXT_shader_texture_lod');
+
+            this._vertexShader = WTCGL.createShaderOfType(this._ctx, this._ctx.VERTEX_SHADER, vertexShaderSource);
+            this._fragmentShader = WTCGL.createShaderOfType(this._ctx, this._ctx.FRAGMENT_SHADER, fragmentShaderSource);
+
+            this._program = this._ctx.createProgram();
+            this._ctx.attachShader(this._program, this._vertexShader);
+            this._ctx.attachShader(this._program, this._fragmentShader);
+            this._ctx.linkProgram(this._program);
+
+            if (!this._ctx.getProgramParameter(this._program, this._ctx.LINK_STATUS)) {
+                console.log('Shader error: ' + this._ctx.getProgramInfoLog(this._program));
+                return null;
+            }
+
+            this.initBuffers([-1.0, 1.0, -1., 1.0, 1.0, -1., -1.0, -1.0, -1., 1.0, -1.0, -1.]);
+
+            this._programInfo = {
+                attribs: { vertexPosition: this._ctx.getAttribLocation(this._program, 'a_position') },
+                uniforms: {
+                    resolution: this._ctx.getUniformLocation(this._program, 'u_resolution'),
+                    time: this._ctx.getUniformLocation(this._program, 'u_time'),
+                    mouse: this._ctx.getUniformLocation(this._program, 'u_mouse')
+                }
+            };
+
+            this._ctx.useProgram(this._program);
+            this.pxratio = pxratio;
+            this.styleElement = styleElement;
+            this.resize(width, height);
+        }
+
+        initBuffers(positions) {
+            this._positions = positions;
+            this._positionBuffer = this._ctx.createBuffer();
+            this._ctx.bindBuffer(this._ctx.ARRAY_BUFFER, this._positionBuffer);
+            this._ctx.bufferData(this._ctx.ARRAY_BUFFER, new Float32Array(positions), this._ctx.STATIC_DRAW);
+        }
+
+        resize(w, h) {
+            this.width = w;
+            this.height = h;
+            this._el.width = w * this.pxratio;
+            this._el.height = h * this.pxratio;
+            this._size = [w * this.pxratio, h * this.pxratio];
+            if (this.styleElement) {
+                this._el.style.width = w + 'px';
+                this._el.style.height = h + 'px';
+            }
+            this._ctx.viewportWidth = w * this.pxratio;
+            this._ctx.viewportHeight = h * this.pxratio;
+            this._ctx.uniform2fv(this._programInfo.uniforms.resolution, this._size);
+        }
+
+        run(delta) {
+            this.running && requestAnimationFrame(this.run);
+            const runFunction = () => {
+                this.time = this.startTime + delta * .0002;
+                this.onRun(delta);
+                this.render();
+            };
+            runFunction();
+        }
+
+        render(buffer = {}) {
+            this._ctx.uniform1f(this._programInfo.uniforms.time, this.time);
+            if (this.mousePos) {
+                this._ctx.uniform2f(this._programInfo.uniforms.mouse, this.mousePos[0], this.mousePos[1]);
+            }
+            this._ctx.viewport(0, 0, buffer.w || this._ctx.viewportWidth, buffer.h || this._ctx.viewportHeight);
+            this._ctx.clearColor(0, 0, 0, 0);
+            this._ctx.clear(this._ctx.COLOR_BUFFER_BIT);
+
+            this._ctx.bindBuffer(this._ctx.ARRAY_BUFFER, this._positionBuffer);
+            this._ctx.vertexAttribPointer(this._programInfo.attribs.vertexPosition, 3, this._ctx.FLOAT, false, 0, 0);
+            this._ctx.enableVertexAttribArray(this._programInfo.attribs.vertexPosition);
+            this._ctx.drawArrays(this._ctx.TRIANGLE_STRIP, 0, 4);
+        }
+
+        set time(value) { if (!isNaN(value)) this._time = value; }
+        get time() { return this._time || 0; }
+        set running(value) {
+            if (!this.running && value === true) {
+                this._then = Date.now();
+                requestAnimationFrame(this.run);
+            }
+            this._running = value === true;
+        }
+        get running() { return this._running === true; }
+        set pxratio(value) { if (value > 0) this._pxratio = value; }
+        get pxratio() { return this._pxratio || 1; }
+        set styleElement(value) { this._styleElement = value === true; }
+        get styleElement() { return this._styleElement !== false; }
+        set startTime(value) { if (!isNaN(value)) this._startTime = value; }
+        get startTime() { return this._startTime || 0; }
+        set onRun(runMethod) { if (typeof runMethod == 'function') this._onRun = runMethod.bind(this); }
+        get onRun() { return this._onRun; }
+
+        static createShaderOfType(ctx, type, source) {
+            const shader = ctx.createShader(type);
+            ctx.shaderSource(shader, source);
+            ctx.compileShader(shader);
+            if (!ctx.getShaderParameter(shader, ctx.COMPILE_STATUS)) {
+                console.log('Shader error: ' + ctx.getShaderInfoLog(shader));
+                ctx.deleteShader(shader);
+                return null;
+            }
+            return shader;
+        }
+    }
+
+    // ========== SHADERS BOMBUS ==========
+    const vertexShader = `
+        attribute vec4 a_position;
+        void main() {
+            gl_Position = a_position;
+        }
+    `;
+
+    const fragmentShader = `
+        precision highp float;
+        uniform vec2 u_resolution;
+        uniform float u_time;
+        uniform vec2 u_mouse;
+
+        vec3 colorAmarillo = vec3(0.914, 0.725, 0.290);  // #E9B949
+        vec3 colorMarron = vec3(0.2, 0.15, 0.05);
+        vec3 colorNegro = vec3(0.05, 0.04, 0.08);
+
+        float hexagon(vec2 p, float size) {
+            vec2 q = abs(p);
+            return max(q.x * 0.866025 + q.y * 0.5, q.y) - size;
+        }
+
+        float noise(vec2 p) {
+            return sin(p.x * 12.9898 + p.y * 78.233) * 43758.5453;
+        }
+
+        void main() {
+            vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+            vec2 p = (gl_FragCoord - u_resolution * 0.5) / u_resolution.y;
+
+            vec2 mouse = (u_mouse / u_resolution.xy) * 2.0 - 1.0;
+            float mouseDist = length(p - mouse * 0.5);
+
+            p *= 6.0;
+            p.x += u_time * 0.3;
+            p.y += sin(u_time * 0.2) * 0.3;
+
+            vec2 id = floor(p + 0.333);
+            p = mod(p + 0.333, 1.0) - 0.5;
+
+            float hex = hexagon(p, 0.45);
+
+            float pulse = sin(u_time * 1.2) * 0.15 + 0.85;
+            float ripple = sin(u_time * 0.5 - mouseDist * 5.0) * 0.5 + 0.5;
+
+            vec3 col;
+            if (hex < 0.0) {
+                float hue = sin((id.x + id.y) * 2.0 + u_time * 0.5) * 0.5 + 0.5;
+                col = mix(colorMarron, colorAmarillo, hue);
+                col *= pulse * ripple;
+            } else {
+                col = colorNegro;
+            }
+
+            float border = smoothstep(0.08, 0.0, hex);
+            col = mix(col, colorAmarillo * 0.8, border * 0.7);
+
+            float glow = exp(-mouseDist * 3.0) * 0.5;
+            col += colorAmarillo * glow;
+
+            gl_FragColor = vec4(col, 1.0);
+        }
+    `;
+
+    // ========== INICIALIZACIÓN WEBGL ==========
+    let renderer;
+    const canvas = document.getElementById('webgl-canvas');
+
+    if (canvas) {
+        renderer = new WTCGL(
+            canvas,
+            vertexShader,
+            fragmentShader,
+            window.innerWidth,
+            window.innerHeight,
+            window.devicePixelRatio || 1
+        );
+        renderer.running = true;
+
+        document.addEventListener('mousemove', (e) => {
+            if (renderer) {
+                renderer.mousePos = [e.clientX, e.clientY];
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (renderer) {
+                renderer.resize(window.innerWidth, window.innerHeight);
+            }
+        });
+    }
+
+    // ========== TSPARTICLES COMPLETO ==========
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (window.tsParticles) {
+        tsParticles.load({
+            id: "bg",
+            options: {
+                fpsLimit: 60,
+                detectRetina: true,
+                background: { color: "transparent" },
+                particles: {
+                    number: { value: 100, density: { enable: true, area: 1000 } },
+                    color: { value: ["#E9B949", "#F4F0E7", "#809E58"] },
+                    shape: { type: "circle" },
+                    opacity: { value: { min: 0.4, max: 0.9 } },
+                    size: {
+                        value: { min: 2, max: 7 },
+                        animation: { enable: true, speed: 3, size_min: 0.5, sync: true }
+                    },
+                    links: {
+                        enable: true,
+                        color: "#E9B949",
+                        distance: 200,
+                        opacity: 0.45,
+                        width: 1.5
+                    },
+                    move: {
+                        enable: !reduce,
+                        speed: 0.8,
+                        direction: "none",
+                        outModes: { default: "bounce" },
+                        random: true,
+                        straight: false,
+                        attract: { enable: true, rotateX: 600, rotateY: 1200 }
+                    }
+                },
+                interactivity: {
+                    detectsOn: "window",
+                    events: {
+                        onHover: {
+                            enable: !reduce,
+                            mode: "repulse",
+                            distance: 250,
+                            duration: 0.4
+                        },
+                        onClick: {
+                            enable: true,
+                            mode: "push",
+                            particles_nb: 8
+                        },
+                        onDiv: {
+                            selectors: ".wrap",
+                            enable: false,
+                            mode: "repulse"
+                        }
+                    },
+                    modes: {
+                        repulse: { distance: 200, duration: 0.4 },
+                        push: { quantity: 8 }
+                    }
+                }
+            }
+        });
+    }
+
+    // ========== SCROLL REVEAL Y NAVEGACIÓN ==========
+    function initScrollReveal() {
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        reveals.forEach(el => observer.observe(el));
+    }
+
+    function initDotNav() {
+        const sections = document.querySelectorAll('section');
+        const dotsNav = document.getElementById('dots');
+
+        sections.forEach((section, i) => {
+            const btn = document.createElement('button');
+            btn.setAttribute('aria-label', `Ir a sección ${i + 1}`);
+            btn.onclick = () => {
+                section.scrollIntoView({ behavior: 'smooth' });
+            };
+            dotsNav.appendChild(btn);
+        });
+
+        window.addEventListener('scroll', () => {
+            let current = 0;
+            sections.forEach((section, i) => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 300) {
+                    current = i;
+                }
+            });
+
+            document.querySelectorAll('#dots button').forEach((btn, i) => {
+                btn.classList.toggle('active', i === current);
+            });
+
+            // Progress bar
+            const progress = document.getElementById('progress');
+            const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (window.scrollY / windowHeight) * 100;
+            progress.style.width = scrolled + '%';
+        });
+    }
+
+    function initMouse() {
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
+            document.documentElement.style.setProperty('--mouse-x', x + '%');
+            document.documentElement.style.setProperty('--mouse-y', y + '%');
+        });
+    }
+
+    // ========== INICIALIZACIÓN GENERAL ==========
+    document.addEventListener('DOMContentLoaded', () => {
+        initScrollReveal();
+        initDotNav();
+        initMouse();
+    });
+
+    window.addEventListener('load', () => {
+        document.querySelectorAll('.reveal').forEach(el => {
+            if (el.getBoundingClientRect().top < window.innerHeight) {
+                el.classList.add('in');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
