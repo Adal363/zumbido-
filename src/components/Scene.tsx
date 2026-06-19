@@ -9,6 +9,7 @@ import React from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import PollenSystem from './entities/PollenSystem';
+import Bumblebee from './Bumblebee';
 import { useEcosystemStore } from '../store/useEcosystemStore';
 
 /** Anima la camara segun el progreso de scroll del usuario. */
@@ -48,6 +49,7 @@ const Scene: React.FC = () => {
 
         <CameraRig />
         <PollenSystem count={5000} />
+        <Bumblebee position={[0, 0, 0]} />
       </Canvas>
     </div>
   );
