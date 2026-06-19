@@ -1,8 +1,9 @@
 /**
- * TLALMANAC-X · Pollen Particle System (Enhanced)
+ * TLALMANAC-X · Pollen Particle System
  * 
- * Improved neon aesthetic with dynamic color cycling and enhanced interactivity.
- * Frequency-reactive particles now glow brighter and shift colors based on audio.
+ * 5,500 partículas de polen dorado oscilando a 400 Hz fijos
+ * Colores realistas: amarillo polen, ámbar cálido, blanco
+ * Vibración resonante constante = frecuencia de polinización sónica del Bombus
  */
 
 import React, { useMemo, useRef, useLayoutEffect } from 'react';
@@ -17,19 +18,18 @@ interface PollenSystemProps {
   count?: number;
 }
 
-const PollenSystem: React.FC<PollenSystemProps> = ({ count = 5000 }) => {
+const PollenSystem: React.FC<PollenSystemProps> = ({ count = 5500 }) => {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
 
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
-      uFrequency: { value: 400 },
+      uFrequency: { value: 400 }, // FIJO: 400 Hz = Bombus sonication
       uVibration: { value: 0 },
-      uColorA: { value: new THREE.Color('#00ff88') },      // Cyan neon
-      uColorB: { value: new THREE.Color('#00d4ff') },      // Light cyan
-      uColorC: { value: new THREE.Color('#ff0096') },      // Magenta neon
-      uColorD: { value: new THREE.Color('#ff6600') },      // Orange neon
+      uColorPrimary: { value: new THREE.Color('#FFD700') },      // Amarillo dorado
+      uColorSecondary: { value: new THREE.Color('#DAA520') },    // Ámbar goldenrod
+      uColorTertiary: { value: new THREE.Color('#F5DEB3') },     // Blanco trigo
       uColorIntensity: { value: 1.0 },
     }),
     []
@@ -47,6 +47,7 @@ const PollenSystem: React.FC<PollenSystemProps> = ({ count = 5000 }) => {
     const dummy = new THREE.Object3D();
     
     for (let i = 0; i < count; i++) {
+      // Esfera de distribución — polen flotante en el aire
       const r = Math.cbrt(Math.random()) * 5.5;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
@@ -57,7 +58,8 @@ const PollenSystem: React.FC<PollenSystemProps> = ({ count = 5000 }) => {
         r * Math.cos(phi)
       );
       
-      const s = 0.015 + Math.random() * 0.035;
+      // Tamaño pequeño: granos de polen (15–35 micrómetros en escala)
+      const s = 0.012 + Math.random() * 0.025;
       dummy.scale.setScalar(s);
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
@@ -74,20 +76,23 @@ const PollenSystem: React.FC<PollenSystemProps> = ({ count = 5000 }) => {
     const mat = materialRef.current;
     if (!mat) return;
     
-    const { audioFrequency, vibrationIntensity } = useEcosystemStore.getState();
+    const { vibrationIntensity } = useEcosystemStore.getState();
     
     mat.uniforms.uTime.value += delta;
-    mat.uniforms.uFrequency.value = audioFrequency;
+    // Frecuencia SIEMPRE 400 Hz — no cambia
+    mat.uniforms.uFrequency.value = 400;
+    
+    // Solo la vibración (amplitud) cambia por interacción del usuario
     mat.uniforms.uVibration.value = THREE.MathUtils.lerp(
       mat.uniforms.uVibration.value,
       vibrationIntensity,
       0.06
     );
     
-    // Color intensity driven by audio
+    // Intensidad de color aumenta con vibración
     mat.uniforms.uColorIntensity.value = THREE.MathUtils.lerp(
       mat.uniforms.uColorIntensity.value,
-      1.0 + vibrationIntensity * 0.5,
+      1.0 + vibrationIntensity * 0.6,
       0.08
     );
   });

@@ -1,6 +1,9 @@
 /**
  * TLALMANAC-X · Main App Component
- * El zumbido que nos une — version MVP Enhanced
+ * 
+ * "El zumbido que nos une"
+ * Polinización sónica del Bombus a 400 Hz
+ * Partículas de polen realista · Territorio Tlalmanalco
  */
 
 import React, { useEffect } from 'react';
@@ -19,13 +22,12 @@ export const App: React.FC = () => {
   const setVibrationIntensity = useEcosystemStore((s) => s.setVibrationIntensity);
   const setScrollProgress = useEcosystemStore((s) => s.setScrollProgress);
 
-  // Enhanced mouse/touch interaction with frequency modulation
+  // Frecuencia fija: 400 Hz = Bombus sonication frequency
+  // Interacción controla amplitud, no frecuencia
   useEffect(() => {
-    const handleMouseDown = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth) * 2 - 1;
+    const handleMouseDown = () => {
       setUserHolding(true);
-      // Frequency varies by horizontal mouse position (150-650 Hz)
-      setAudioFrequency(400 + x * 250);
+      setAudioFrequency(400); // Fijo
       setAudioGain(0.35);
       setVibrationIntensity(1.0);
     };
@@ -33,30 +35,23 @@ export const App: React.FC = () => {
     const handleMouseMove = (e: MouseEvent) => {
       const holdingState = useEcosystemStore.getState().isUserHolding;
       if (holdingState) {
-        const x = (e.clientX / window.innerWidth) * 2 - 1;
-        setAudioFrequency(400 + x * 250);
         const y = (e.clientY / window.innerHeight);
-        setAudioGain(0.2 + y * 0.4);
+        setAudioGain(0.2 + y * 0.4); // Ganancia por altura
       }
     };
 
     const handleMouseUp = () => setUserHolding(false);
 
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        const x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
-        setUserHolding(true);
-        setAudioFrequency(400 + x * 250);
-        setAudioGain(0.35);
-        setVibrationIntensity(1.0);
-      }
+    const handleTouchStart = () => {
+      setUserHolding(true);
+      setAudioFrequency(400);
+      setAudioGain(0.35);
+      setVibrationIntensity(1.0);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
       const holdingState = useEcosystemStore.getState().isUserHolding;
       if (holdingState && e.touches.length > 0) {
-        const x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
-        setAudioFrequency(400 + x * 250);
         const y = (e.touches[0].clientY / window.innerHeight);
         setAudioGain(0.2 + y * 0.4);
       }
@@ -118,7 +113,7 @@ export const App: React.FC = () => {
         <ThreatSection />
         <RestorationSection />
 
-        {/* Sección final mejorada */}
+        {/* Sección final */}
         <section
           style={{
             height: '100vh',
@@ -132,15 +127,13 @@ export const App: React.FC = () => {
             overflow: 'hidden',
           }}
         >
-          {/* Animated gradient background */}
           <div
             style={{
               position: 'absolute',
               inset: 0,
-              opacity: 0.2,
+              opacity: 0.15,
               background: `
-                radial-gradient(circle at 30% 30%, rgba(0, 255, 136, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 70% 70%, rgba(255, 0, 150, 0.3) 0%, transparent 50%)
+                radial-gradient(circle at 50% 50%, rgba(218, 165, 32, 0.2) 0%, transparent 60%)
               `,
               pointerEvents: 'none',
             }}
@@ -151,12 +144,12 @@ export const App: React.FC = () => {
               style={{
                 fontFamily: '"Playfair Display", serif',
                 fontSize: 'clamp(36px, 7vw, 72px)',
-                background: 'linear-gradient(135deg, #00ff88 0%, #ff0096 100%)',
+                background: 'linear-gradient(135deg, #DAA520 0%, #D4A574 50%, #CD853F 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 marginBottom: '1rem',
                 lineHeight: 1.2,
-                filter: 'drop-shadow(0 0 20px rgba(0, 255, 136, 0.3))',
+                filter: 'drop-shadow(0 0 20px rgba(218, 165, 32, 0.3))',
               }}
             >
               Cuida el zumbido
@@ -168,10 +161,10 @@ export const App: React.FC = () => {
                 maxWidth: '560px',
                 margin: '0 auto',
                 lineHeight: '1.7',
-                textShadow: '0 0 10px rgba(0, 255, 136, 0.2)',
+                textShadow: '0 0 10px rgba(218, 165, 32, 0.2)',
               }}
             >
-              Los jicotes de Tlalmanalco todavia están aqui.
+              Los jicotes de Tlalmanalco todavía están aquí.
               <br />
               Pero necesitan que los cuides.
             </p>

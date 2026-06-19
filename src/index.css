@@ -1,4 +1,4 @@
-/* Global resets — the app paints into a fixed full-viewport canvas + scroll. */
+/* Global styles — Dark academia + golden pollen aesthetic */
 *,
 *::before,
 *::after {
@@ -11,9 +11,9 @@ body {
   padding: 0;
   background: #0a0e27;
   background-image: 
-    radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 0, 150, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 40% 0%, rgba(0, 149, 255, 0.02) 0%, transparent 50%);
+    radial-gradient(circle at 20% 50%, rgba(218, 165, 32, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(212, 165, 116, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 40% 0%, rgba(218, 165, 32, 0.02) 0%, transparent 50%);
   color: #e8e3da;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -24,7 +24,7 @@ body {
   min-height: 100%;
 }
 
-/* Scrollbar futurista */
+/* Scrollbar personalizada — dorada */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -34,18 +34,20 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #00ff88 0%, #ff0096 100%);
+  background: linear-gradient(180deg, #DAA520 0%, #CD853F 100%);
   border-radius: 4px;
-  box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+  box-shadow: 0 0 8px rgba(218, 165, 32, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  box-shadow: 0 0 12px rgba(0, 255, 136, 0.6);
+  box-shadow: 0 0 12px rgba(218, 165, 32, 0.5);
 }
 
-/* Efecto de neón global */
-@keyframes glitch {
-  0% { text-shadow: 2px 0 #00ff88, -2px 0 #ff0096; }
-  50% { text-shadow: -2px 0 #00ff88, 2px 0 #ff0096; }
-  100% { text-shadow: 2px 0 #00ff88, -2px 0 #ff0096; }
+/* Selección de texto */
+::selection {
+  background: rgba(218, 165, 32, 0.3);
+  color: #DAA520;
 }
+
+/* Fuentes importadas */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700&display=swap');

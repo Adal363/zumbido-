@@ -1,37 +1,37 @@
-# STAGE 1: Build
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copiar archivos de dependencias
 COPY package*.json ./
 
-# Install dependencies
+# Instalar dependencias
 RUN npm install --legacy-peer-deps
 
-# Copy source code
+# Copiar código fuente
 COPY . .
 
-# Build the app
+# Build
 RUN npm run build
 
-# STAGE 2: Runtime
+# Stage de producción
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Install serve to run the production build
+# Instalar serve para servir archivos estáticos
 RUN npm install -g serve
 
-# Copy built app from builder
+# Copiar dist desde builder
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/public ./public
 
-# Expose port
+# Exponer puerto
 EXPOSE 3000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:3000/ || exit 1
 
-# Start the server
-CMD ["serve", "-s", "dist", "-l", "3000"]
+# Comando para servir
+CMD ["serve", "-s", "dist", "-l", "3000", "--no-clipboard", "--single"]

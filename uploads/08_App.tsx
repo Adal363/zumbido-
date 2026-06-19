@@ -252,7 +252,8 @@ export const App: React.FC = () => {
 
         {/* SEC 2: DATA LAYER */}
         <section style={{
-          height: '100vh',
+          height: 'auto',
+          minHeight: '100vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -272,6 +273,34 @@ export const App: React.FC = () => {
               Vibra a frecuencias específicas que liberan el polen que ningún otro insecto puede alcanzar.
               Sin ellos, la diferencia en cosecha puede ser hasta del <strong style={{ color: '#D4A574' }}>50%</strong>.
             </p>
+
+            {/* YOUTUBE VIDEO */}
+            <div style={{
+              position: 'relative',
+              paddingBottom: '56.25%',
+              height: 0,
+              overflow: 'hidden',
+              marginBottom: '2rem',
+              borderRadius: '12px',
+              boxShadow: '0 0 30px rgba(157, 0, 255, 0.2)',
+            }}>
+              <iframe
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  borderRadius: '12px',
+                }}
+                src="https://www.youtube.com/embed/KzfvXq6gepE"
+                title="Documental Bombus"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',

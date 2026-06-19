@@ -55,24 +55,24 @@ const HeroSection: React.FC = () => {
         textAlign: 'center',
         padding: '2rem',
         position: 'relative',
-        background: 'linear-gradient(135deg, rgba(10, 14, 39, 0.8) 0%, rgba(15, 10, 50, 0.8) 100%)',
+        background: 'linear-gradient(135deg, rgba(10, 14, 39, 0.9) 0%, rgba(15, 10, 50, 0.9) 100%)',
       }}
     >
-      {/* Fondo de partículas de luz */}
+      {/* Fondo de partículas */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          opacity: 0.3,
+          opacity: 0.2,
           pointerEvents: 'none',
           background: `
-            radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(255, 0, 150, 0.1) 0%, transparent 50%)
+            radial-gradient(circle at 20% 50%, rgba(218, 165, 32, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(212, 165, 116, 0.1) 0%, transparent 50%)
           `,
         }}
       />
 
-      {/* HUD interactivo */}
+      {/* HUD interactivo — Datos en vivo */}
       <div
         ref={hudRef}
         style={{
@@ -81,77 +81,110 @@ const HeroSection: React.FC = () => {
           left: '2rem',
           color: '#E8E3DA',
           fontFamily: 'monospace',
-          fontSize: '13px',
+          fontSize: '12px',
           lineHeight: '1.8',
-          textShadow: '0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.2)',
+          textShadow: '0 0 10px rgba(218, 165, 32, 0.4)',
           textAlign: 'left',
-          borderLeft: '3px solid #00ff88',
+          borderLeft: '3px solid #DAA520',
           paddingLeft: '0.75rem',
-          background: 'rgba(0, 255, 136, 0.05)',
+          background: 'rgba(218, 165, 32, 0.08)',
           padding: '1rem',
           borderRadius: '0.5rem',
-          boxShadow: '0 0 20px rgba(0, 255, 136, 0.2)',
+          boxShadow: '0 0 20px rgba(218, 165, 32, 0.15)',
         }}
       >
-        <p style={{ color: '#A8A39A', margin: '0 0 0.5rem', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-          ⚡ INTERACTIVO
+        <p style={{ color: '#A8A39A', margin: '0 0 0.5rem', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          ⚙ RESONANCIA SÓNICA
         </p>
         <p style={{ margin: '0.3rem 0' }}>
-          Frecuencia:{' '}
-          <span style={{ color: '#00ff88', fontWeight: 'bold' }}>{audioFreq.toFixed(0)} Hz</span>
+          Frecuencia: <span style={{ color: '#DAA520', fontWeight: 'bold' }}>{audioFreq.toFixed(0)} Hz</span>
         </p>
         <p style={{ margin: '0.3rem 0' }}>
-          Amplitud:{' '}
-          <span style={{ color: '#ff0096', fontWeight: 'bold' }}>
+          Amplitud: <span style={{ color: '#CD853F', fontWeight: 'bold' }}>
             {(audioGain * 100).toFixed(0)}%
           </span>
         </p>
         <p style={{ margin: '0.3rem 0' }}>
-          Salud:{' '}
-          <span style={{ color: '#00d4ff', fontWeight: 'bold' }}>{healthScore}%</span>
+          Ecosistema: <span style={{ color: '#D4A574', fontWeight: 'bold' }}>{healthScore}%</span>
+        </p>
+        <p style={{ margin: '0.7rem 0 0', fontSize: '9px', color: '#6B6760', fontStyle: 'italic', borderTop: '1px solid rgba(218, 165, 32, 0.2)', paddingTop: '0.5rem' }}>
+          Haz clic y mantén para vibrar
         </p>
       </div>
 
       {/* Contenido principal */}
-      <div style={{ position: 'relative', zIndex: 10 }}>
+      <div style={{ position: 'relative', zIndex: 10, maxWidth: '800px' }}>
         <h1
           ref={titleRef}
           style={{
             fontFamily: '"Playfair Display", serif',
-            fontSize: 'clamp(36px, 7vw, 72px)',
-            background: 'linear-gradient(135deg, #00ff88 0%, #00d4ff 50%, #ff0096 100%)',
+            fontSize: 'clamp(42px, 8vw, 84px)',
+            background: 'linear-gradient(135deg, #DAA520 0%, #D4A574 50%, #CD853F 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             marginBottom: '1.5rem',
-            lineHeight: 1.15,
-            filter: 'drop-shadow(0 0 20px rgba(0, 255, 136, 0.3))',
+            lineHeight: 1.1,
+            filter: 'drop-shadow(0 0 25px rgba(218, 165, 32, 0.3))',
+            fontWeight: 700,
+            letterSpacing: '-0.02em',
           }}
         >
           El zumbido que nos une
         </h1>
+
         <p
           ref={subtitleRef}
           style={{
-            fontSize: 'clamp(15px, 2vw, 18px)',
+            fontSize: 'clamp(16px, 2.2vw, 20px)',
             color: '#A8A39A',
-            maxWidth: '560px',
+            maxWidth: '620px',
             margin: '0 auto 2.5rem',
-            lineHeight: '1.7',
-            textShadow: '0 0 10px rgba(0, 255, 136, 0.2)',
+            lineHeight: '1.8',
+            textShadow: '0 0 10px rgba(218, 165, 32, 0.2)',
+            fontWeight: 300,
+            letterSpacing: '0.3px',
           }}
         >
           Los pequeños polinizadores que sostienen la vida en Tlalmanalco.
-          Una historia de ciencia, territorio y esperanza.
+          <br />
+          <span style={{ fontSize: 'clamp(14px, 1.8vw, 18px)', color: '#8A7A6B' }}>
+            Una historia de ciencia, territorio y esperanza.
+          </span>
         </p>
+
+        <div
+          style={{
+            maxWidth: '680px',
+            margin: '2rem auto',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '1rem',
+            fontSize: '13px',
+            color: '#A8A39A',
+          }}
+        >
+          <div style={{ background: 'rgba(218, 165, 32, 0.08)', padding: '0.875rem', borderRadius: '8px', borderLeft: '2px solid #DAA520' }}>
+            <p style={{ margin: '0 0 0.3rem', color: '#DAA520', fontWeight: 600, fontSize: '11px', textTransform: 'uppercase' }}>Frecuencia</p>
+            <p style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#D4A574' }}>400 Hz</p>
+            <p style={{ margin: '0.2rem 0 0', fontSize: '11px', color: '#6B6760' }}>Polinización sónica</p>
+          </div>
+          <div style={{ background: 'rgba(212, 165, 116, 0.08)', padding: '0.875rem', borderRadius: '8px', borderLeft: '2px solid #D4A574' }}>
+            <p style={{ margin: '0 0 0.3rem', color: '#D4A574', fontWeight: 600, fontSize: '11px', textTransform: 'uppercase' }}>Impacto</p>
+            <p style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#DAA520' }}>+50%</p>
+            <p style={{ margin: '0.2rem 0 0', fontSize: '11px', color: '#6B6760' }}>Rendimiento de cosecha</p>
+          </div>
+        </div>
+
         <p
           ref={scrollHintRef}
           style={{
             fontSize: '13px',
-            color: '#00ff88',
-            opacity: 0.9,
+            color: '#DAA520',
+            opacity: 0.85,
             letterSpacing: '0.15em',
             margin: 0,
             textTransform: 'uppercase',
+            fontWeight: 500,
             animation: 'pulse 2s infinite',
           }}
         >
@@ -161,8 +194,8 @@ const HeroSection: React.FC = () => {
 
       <style>{`
         @keyframes pulse {
-          0%, 100% { opacity: 0.7; }
-          50% { opacity: 1; }
+          0%, 100% { opacity: 0.6; transform: translateY(0); }
+          50% { opacity: 1; transform: translateY(4px); }
         }
       `}</style>
     </section>
