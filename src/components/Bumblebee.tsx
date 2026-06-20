@@ -132,6 +132,3 @@ const Bumblebee: React.FC<BumblebeeProps> = ({ position = [0, 1.2, 0] }) => {
 };
 
 export default Bumblebee;
-
-// Pre-cargar el modelo
-useGLTF.preload('/models/bombus.glb');
